@@ -1392,7 +1392,6 @@ progress {
   .col-lg-6 {
     flex: 0 0 auto;
     width: 50%;
-    text-align: center;
   }
 
   .col-lg-7 {
@@ -7324,7 +7323,6 @@ textarea.form-control-lg {
 
 .mt-5 {
   margin-top: 3rem !important;
-  text-align: center;
 }
 
 .mt-auto {
