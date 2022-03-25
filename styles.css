@@ -1,5 +1,6 @@
 body{
     margin: 0%;
     text-align: center;
-    background-image: url(https://Shivaen.github.io/mountain.jpg);
+    background-image: url("https://Shivaen.github.io/mountain.jpg");
+    background-size: cover;
 }
