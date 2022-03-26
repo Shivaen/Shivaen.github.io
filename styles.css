@@ -3,7 +3,11 @@
     padding: 0%;
 }
 .header{
+    min-height: 100vh;
+    width: 100%;
     background-image: url("https://Shivaen.github.io/mountains.jpg");
+    background-position: 100%;
     background-size: cover;
+    position: relative;
     
 }
