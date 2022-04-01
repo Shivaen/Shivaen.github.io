@@ -16,6 +16,10 @@
     background-position: center;
     
 }
+.frontpage img{
+    height: 7%;
+    width: 7%;
+}
 *, *:before, *:after {
     box-sizing: border-box;
   }
@@ -43,29 +47,51 @@
 
 nav{
     width: 100%;
-    height: 50px;
+    height: 90px;
     background-color: black;
 }
 .nav-links{
-    margin-left: 75px;
+    margin-left: 40px;
 
 }
 .nav-links ul li{
     list-style: none;
+    position: relative;
     display: inline-block;
     float: left;
-    line-height: 50px;
+    line-height: 90px;
 }
 .nav-links ul li a{
     display: block;
     text-decoration: none;
-    font-size: 14px;
+    font-size: 20px;
     
     color: white;
     padding: 0% 20px;
 
 }
 .nav-links ul li a:hover{
+    color: wheat;
+}
+
+.nav-links ul li ul {
+    display: none;
+    position: absolute;
+    background-color: black;
+    border-radius: 0px 0px 4px 4px;
+    width: 175px;
+}
+
+.nav-links ul li:hover ul {
+    display: block;
+    
+}
+
+.nav-links ul li ul a {
+    
+}
+
+.nav-links ul li ul a:hover {
     color: wheat;
 }
 
