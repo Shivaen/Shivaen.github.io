@@ -2,7 +2,7 @@
 *{
     margin: 0%;
     padding: 0%;
-    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .frontpage{
@@ -21,7 +21,7 @@ nav img{
     width: 5%;
     top: 1%;
     left: 0%;
-    position: fixed;
+    position: absolute;
     
 }
 *, *:before, *:after {
@@ -104,39 +104,61 @@ nav{
     color: wheat;
 }
 
-* {box-sizing: border-box;}
-
-.button-text{
-    position: fixed;
+/*Personal*/
+.personal{
+    background-color: aliceblue;
+}
+.personalhead {
+    text-align: center;
+    justify-content: center;
+    padding: 50px;
+    position: absolute;
+    margin-left: 36%;
+   
+}
+.personalhead p{
+    margin-left: auto;
+    margin-right: auto;
+    padding: 5px;
 }
 
-.button-text h2,p{
+/*Hair Pick*/
+
+* {box-sizing: border-box;}
+
+
+.button-text-personal-pick{
+    float: left;
+    margin-block-start: 175px;
+    margin-inline-start: 310px;
+    background-color: white; 
+
+}
+
+.button-text-personal-pick h2,p{
     text-align: center;
-    width: 280px;
-    padding-top: 150px;
+    width: 400px;
     
 }
 
-/* Button used to open the contact form - fixed at the bottom of the page */
-.button-text .open-button {
-  height: 10%;
-  width: 280px;
+.button-text-personal-pick .open-button-personal-pick {
+  height: 50%;
+  width: 400px;
   color: white;
   border: none;
   cursor: pointer;
-  opacity: 0.8;
+  opacity: 1;
   margin-top: 50px;
   
 }
-.button-text .open-button img {
+.button-text-personal-pick .open-button-personal-pick img {
     height: 100%;
     width: 100%;
     object-fit: cover;
 }
 
-/* The popup form - hidden by default */
-.form-popup {
-  padding: 200px;
+.form-popup-personal-pick {
+  padding: 50px;
   position: absolute;
   display: none;
   justify-content: center;
@@ -147,21 +169,112 @@ nav{
   height: 100%;
   border: 3px solid #f1f1f1;
   z-index: 9;
+  background-color: aliceblue;
 }
 
-.form-popup img {
-    width: 100%;
-    height: 100%;
+.form-popup-personal-pick img {
+    width: 500px;
+    height: 80%;
+
+}
+.form-popup-personal-pick img:hover {
+    opacity: .8;
+    cursor: pointer;
 
 }
 
+.form-popup-personal-pick p {
+    padding: 10px;
+    text-align: center;
+    justify-content: center;
+    margin-left: 0px;
+    width: 100%
+    
+}
 
-/* Add a red background color to the cancel button */
-.form-popup .cancel {
+.form-popup-personal-pick .cancel {
   background-color: red;
 }
 
-/* Add some hover effects to buttons */
-.form-popup .btn:hover, .open-button:hover {
+.form-popup-personal-pick .btn:hover, .open-button-personal-pick:hover {
+  opacity: .8;
+  cursor: pointer;
+}
+
+/* Shelf */
+
+* {box-sizing: border-box;}
+
+.button-text-personal-shelf{
+    float: left;
+    margin-block-start: 175px;
+    margin-inline-start: 310px;
+    background-color: white;
+
+}
+
+.button-text-personal-shelf h2,p{
+    text-align: center;
+    width: 400px;
+    
+}
+
+.button-text-personal-shelf .open-button-personal-shelf {
+  height: 50%;
+  width: 400px;
+  color: white;
+  border: none;
+  cursor: pointer;
   opacity: 1;
+  margin-top: 50px;
+  
+}
+.button-text-personal-shelf .open-button-personal-shelf img {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+}
+
+.form-popup-personal-shelf {
+  padding: 50px;
+  position: absolute;
+  display: none;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  vertical-align: middle;
+  width: 100%;
+  height: 100%;
+  border: 3px solid #f1f1f1;
+  z-index: 9;
+  background-color: aliceblue;
+}
+
+.form-popup-personal-shelf img {
+    width: 600px;
+    height: 80%;
+
+}
+
+.form-popup-personal-shelf img:hover {
+    opacity: .8;
+    cursor: pointer;
+
+}
+
+.form-popup-personal-shelf p {
+    padding: 10px;
+    text-align: center;
+    justify-content: center;
+    margin-left: 0px;
+    width: 100%
+}
+
+.form-popup-personal-shelf .cancel {
+  background-color: red;
+}
+
+.form-popup-personal-shelf .btn:hover, .open-button-personal-shelf:hover {
+  opacity: .8;
+  cursor: pointer;
 }
