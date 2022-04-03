@@ -122,16 +122,21 @@ nav{
     padding: 5px;
 }
 
+.personal-wrapper {
+    text-align: center;
+    justify-items: center;
+    margin-top: 150px;
+}
+
 /*Hair Pick*/
 
 * {box-sizing: border-box;}
 
 
 .button-text-personal-pick{
-    float: left;
-    margin-block-start: 175px;
-    margin-inline-start: 310px;
+    display: inline-block;
     background-color: white; 
+    padding: 0 50px;
 
 }
 
@@ -206,10 +211,9 @@ nav{
 * {box-sizing: border-box;}
 
 .button-text-personal-shelf{
-    float: left;
-    margin-block-start: 175px;
-    margin-inline-start: 310px;
+    display: inline-block;
     background-color: white;
+    padding: 0 50px;
 
 }
 
