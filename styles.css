@@ -140,8 +140,8 @@ nav{
 .button-text-personal-pick{
     display: inline-block;
     background-color: cornsilk; 
-    padding: 50px 50px;
-    margin: 100px;
+    padding: 40px 40px;
+    margin: 75px;
 
 }
 
@@ -166,6 +166,10 @@ nav{
     height: 100%;
     width: 100%;
     object-fit: cover;
+}
+
+.button-text-personal-pick h2 {
+    margin-top: 10px;
 }
 
 .form-popup-personal-pick {
@@ -219,8 +223,8 @@ nav{
 .button-text-personal-shelf{
     display: inline-block;
     background-color: cornsilk;
-    padding: 50px 50px;
-    margin: 100px;
+    padding: 40px 40px;
+    margin: 75px;
 
 }
 
@@ -244,6 +248,11 @@ nav{
     width: 100%;
     object-fit: cover;
 }
+
+.button-text-personal-shelf h2 {
+    margin-top: 10px;
+}
+
 
 .form-popup-personal-shelf {
   padding: 50px;
