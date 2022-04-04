@@ -175,6 +175,8 @@ nav{
 
 .form-popup-personal-pick {
   padding: 50px;
+  top: 0;
+  margin-top: 80px;
   position: absolute;
   display: none;
   justify-content: center;
@@ -182,10 +184,9 @@ nav{
   text-align: center;
   vertical-align: middle;
   width: 100%;
-  height: 100%;
-  border: 3px solid #f1f1f1;
+  height: 100vh;
   z-index: 9;
-  background-color:aliceblue;
+  background: rgba(0,0,0,0.9);
 }
 
 .form-popup-personal-pick img {
@@ -199,20 +200,68 @@ nav{
 
 }
 
+.form-popup-personal-pick h1 {
+    color: white;
+    margin-bottom: 10px;
+}
+
 .form-popup-personal-pick p {
+    color: white;
     padding: 10px;
     text-align: center;
     justify-content: center;
-    margin-left: 0px;
-    width: 100%
+    margin-right: auto;
+    margin-left: auto;
+    width: 60%
     
 }
 
-.form-popup-personal-pick .cancel {
-  background-color: red;
+.form-popup-personal-pick .right-icon-pick i {
+    position: absolute;
+    color: white;
+    font-size: 3em;
+    top: 450px;
+    right: 450px;
+    transition: opacity 0.8s;
+    
 }
 
-.form-popup-personal-pick .btn:hover, .open-button-personal-pick:hover {
+.form-popup-personal-pick .right-icon-pick i:hover {
+    opacity: .7;
+    cursor: pointer;
+    
+}
+
+.form-popup-personal-pick .left-icon-pick i {
+    position: absolute;
+    color: white;
+    font-size: 3em;
+    top: 450px;
+    right: 1250px;
+    transition: opacity 0.8s;
+    
+}
+
+.form-popup-personal-pick .left-icon-pick i:hover {
+    opacity: .7;
+    cursor: pointer;
+}
+
+.form-popup-personal-pick .btn i{
+    color: white;
+    font-size: 5em;
+    transition: opacity 0.8s;
+    position: absolute;
+    top: 15px;
+    right: 15px;
+}
+
+.form-popup-personal-pick .btn i:hover{
+    opacity: .7;
+    cursor: pointer;
+}
+
+.open-button-personal-pick:hover {
   opacity: .8;
   cursor: pointer;
 }
@@ -255,18 +304,19 @@ nav{
 }
 
 .form-popup-personal-shelf {
-  padding: 50px;
-  position: absolute;
-  display: none;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  vertical-align: middle;
-  width: 100%;
-  height: 100%;
-  border: 3px solid #f1f1f1;
-  z-index: 9;
-  background-color: aliceblue;
+    padding: 50px;
+    top: 0;
+    margin-top: 80px;
+    position: absolute;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    vertical-align: middle;
+    width: 100%;
+    height: 100vh;
+    z-index: 9;
+    background: rgba(0,0,0,0.9);
 }
 
 .form-popup-personal-shelf img {
@@ -280,20 +330,67 @@ nav{
     cursor: pointer;
 
 }
+.form-popup-personal-shelf h1 {
+    color: white;
+    margin-bottom: 10px;
+}
 
 .form-popup-personal-shelf p {
+    color: white;
     padding: 10px;
     text-align: center;
     justify-content: center;
-    margin-left: 0px;
-    width: 100%
+    margin-right: auto;
+    margin-left: auto;
+    width: 60%
 }
 
-.form-popup-personal-shelf .cancel {
-  background-color: red;
+.form-popup-personal-shelf .right-icon-shelf i {
+    position: absolute;
+    color: white;
+    font-size: 3em;
+    top: 450px;
+    right: 450px;
+    transition: opacity 0.8s;
+    
 }
 
-.form-popup-personal-shelf .btn:hover, .open-button-personal-shelf:hover {
+.form-popup-personal-shelf .right-icon-shelf i:hover {
+    opacity: .7;
+    cursor: pointer;
+    
+}
+
+.form-popup-personal-shelf .left-icon-shelf i {
+    position: absolute;
+    color: white;
+    font-size: 3em;
+    top: 450px;
+    right: 1250px;
+    transition: opacity 0.8s;
+    
+}
+
+.form-popup-personal-shelf .left-icon-shelf i:hover {
+    opacity: .7;
+    cursor: pointer;
+}
+
+.form-popup-personal-shelf .btn i{
+    color: white;
+    font-size: 5em;
+    transition: opacity 0.8s;
+    position: absolute;
+    top: 15px;
+    right: 15px;
+}
+
+.form-popup-personal-shelf .btn i:hover{
+    opacity: .7;
+    cursor: pointer;
+}
+
+.open-button-personal-shelf:hover {
   opacity: .8;
   cursor: pointer;
 }

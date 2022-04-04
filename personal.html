@@ -6,6 +6,7 @@
     <title>Document</title>
     <link rel="stylesheet" href="styles.css">
     <script src="script.js"></script>
+    <script src="https://kit.fontawesome.com/6ac40f7a12.js" crossorigin="anonymous"></script>
 </head >
 <body class = "personal">
     <nav>
@@ -27,7 +28,7 @@
     </nav>
     <div class = personalhead>
         <h3>Personal</h3>
-        <p>These are works that I made in my own time either for myself or others.</p>
+        <p>These are works that I made in my own time either for myself or others. Click on each box for more information.</p>
     </div>
    
     <div class="personal-wrapper">
@@ -52,19 +53,35 @@
     
     <div class="form-popup-personal-pick" id="myForm-pick">
         <h1>Hair Pick</h1>
-        <img id="Pick" onclick= "changeImagePick()" src="https://Shivaen.github.io/Pick1.jpeg" alt="">
+        <img id="Pick" src="https://Shivaen.github.io/Pick1.jpeg" alt="">
         <p>These hair picks are made out of walnut, have a powdered silver inlay, and are finished with a natural beeswax. I cut the picks out of a solid piece of wood using a scroll saw. I sanded the piece up to 4000 grit, adding a taper along the way. The engraving for the names was done using the laser cutter and was inlayed with powdered silver and CA glue. I went with a beeswax and orange oil finish in order to make the piece safe for use on hair. </p>
+
+        <div class = right-icon-pick>
+            <i class="fa-regular fa-chevron-right" onclick="changeImagePick()"></i>
+        </div>
+
+        <div class = left-icon-pick>
+            <i class="fa-regular fa-chevron-left" onclick="changeImagePickBack()"></i>
+        </div>
         
-        <button type="button" class="btn cancel" onclick="closeFormPick()">Close</button>
+        <button type="button" class="btn cancel" onclick="closeFormPick()"><i class="fa-regular fa-xmark"></i></button>
         
     </div>
 
     <div class="form-popup-personal-shelf" id="myForm-shelf">
         <h1>Bookshelf</h1>
-        <img id="Shelf" onclick= "changeImageShelf()" src="https://Shivaen.github.io/Shelf1.jpeg" alt="">
+        <img id="Shelf"  src="https://Shivaen.github.io/Shelf1.jpeg" alt="">
         <p>I made this simple bookshelf over the course of three days during my winter break in 2020-2021. I utilized lumber from a home improvement store. I cut everything down to the appropriate size and sanded to 220 grit. Then I stained the wood and assembled it using shelf brackets. This piece was done entirely using hand tools. </p>
-        
-        <button type="button" class="btn cancel" onclick="closeFormShelf()">Close</button>
+
+        <div class = right-icon-shelf>
+            <i class="fa-regular fa-chevron-right" onclick="changeImageShelf()"></i>
+        </div>
+
+        <div class = left-icon-shelf>
+            <i class="fa-regular fa-chevron-left" onclick="changeImageShelfBack()"></i>
+        </div>
+
+        <button type="button" class="btn cancel" onclick="closeFormShelf()"><i class="fa-regular fa-xmark"></i></button>
         
     </div>
 </body>
