@@ -194,11 +194,6 @@ nav{
     height: 80%;
 
 }
-.form-popup-personal-pick img:hover {
-    opacity: .8;
-    cursor: pointer;
-
-}
 
 .form-popup-personal-pick h1 {
     color: white;
@@ -325,11 +320,6 @@ nav{
 
 }
 
-.form-popup-personal-shelf img:hover {
-    opacity: .8;
-    cursor: pointer;
-
-}
 .form-popup-personal-shelf h1 {
     color: white;
     margin-bottom: 10px;
