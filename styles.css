@@ -211,6 +211,11 @@ nav{
     
 }
 
+.form-popup-personal-pick .btn {
+    background: none;
+    border: none;
+}
+
 .form-popup-personal-pick .right-icon-pick i {
     position: absolute;
     color: white;
@@ -333,6 +338,10 @@ nav{
     margin-right: auto;
     margin-left: auto;
     width: 60%
+}
+.form-popup-personal-shelf .btn {
+    background: none;
+    border: none;
 }
 
 .form-popup-personal-shelf .right-icon-shelf i {
