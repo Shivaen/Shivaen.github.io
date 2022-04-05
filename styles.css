@@ -158,6 +158,21 @@ nav{
     }
     
 }
+
+@media screen and (width: 1366px) {
+    .personalhead{
+        margin-left: 30%;
+    }
+    
+}
+
+@media screen and (width: 800px) {
+    .personalhead{
+        margin-left: 30%;
+    }
+    
+}
+
 .personalhead p{
     margin-left: auto;
     margin-right: auto;
