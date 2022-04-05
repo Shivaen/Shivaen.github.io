@@ -324,15 +324,15 @@ nav{
 
 @media screen and (width: 1920px) {
     .form-popup-personal-pick .right-icon-pick i {
-        top: 550px;
-        right: 600px
+        top: 500px;
+        right: 550px
     }
 }
 
 @media screen and (width: 1920px) {
     .form-popup-personal-pick .left-icon-pick i{
-        top: 550px;
-        right: 1400px;
+        top: 500px;
+        right: 1300px;
 
     } 
 }
