@@ -3,11 +3,10 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Personal</title>
     <link rel="stylesheet" href="styles.css">
     <script src="script.js"></script>
     <script src="https://kit.fontawesome.com/6ac40f7a12.js" crossorigin="anonymous"></script>
-    <script src="jquery-3.6.0.min.js"></script>
 </head >
 <body class = "personal">
     <nav>
@@ -16,11 +15,10 @@
             <ul>
                 <li><a href="index.html">Home</a></li>
                 <li><a href="aboutme.html">About Me</a></li>
-                <li><a href="mywork.html">My Work</a>
+                <li><a href="mywork.html" class="work">My Work</a>
                     <ul>
-                        <li><a href="#">3D Design</a></li>
-                        <li><a href="#">Printmaking</a></li>
-                        <li><a href="#">Digital Fabrication</a></li>
+                        <li><a href="2d.html">3D Design</a></li>
+                        <li><a href="3d.html">2D Design</a></li>
                         <li><a href="personal.html">Personal</a></li>
                     </ul>
                 </li>
@@ -33,16 +31,16 @@
     </div>
    
     <div class="personal-wrapper">
-        <div class="button-text-personal-pick">
-            <button class="open-button-personal-pick" onclick="openFormPick()"><img src="https://Shivaen.github.io/Pick1.jpeg" alt=""></button>
+        <div class="button-text-personal-pick" onclick="openFormPick()">
+            <button class="open-button-personal-pick" ><img src="https://Shivaen.github.io/Pick1.jpeg" alt=""></button>
             <h2>Hair Pick</h2>
             <p>Woodworking</p>
     
     
         </div>
     
-        <div class="button-text-personal-shelf">
-            <button class="open-button-personal-shelf" onclick="openFormShelf()"><img src="https://Shivaen.github.io/Shelf1.jpeg" alt=""></button>
+        <div class="button-text-personal-shelf" onclick="openFormShelf()">
+            <button class="open-button-personal-shelf" ><img src="https://Shivaen.github.io/Shelf1.jpeg" alt=""></button>
             <h2>Bookshelf</h2>
             <p>Woodworking</p>
     
@@ -50,7 +48,6 @@
         </div>
 
     </div>
-    
     
     <div class="form-popup-personal-pick" id="myForm-pick">
         <h1>Hair Pick</h1>

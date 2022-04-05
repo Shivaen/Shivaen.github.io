@@ -1,6 +1,8 @@
 
+
 function openFormPick() {
   document.getElementById("myForm-pick").style.display = "block";
+  $("myForm-pick").fadeIn(1000);
 }
 
 function closeFormPick() {

@@ -76,8 +76,15 @@ nav{
     padding: 0% 20px;
 
 }
+
 .nav-links ul li a:hover{
     color: wheat;
+}
+
+.nav-links ul li a.work{
+    pointer-events: none;
+    cursor: default;
+
 }
 
 .nav-links ul li ul {
@@ -106,9 +113,34 @@ nav{
     color: wheat;
 }
 
+@keyframes fadeIn {
+    0% {opacity:0;}
+    100% {opacity:1;}
+  }
+  
+  @-moz-keyframes fadeIn {
+    0% {opacity:0;}
+    100% {opacity:1;}
+  }
+  
+  @-webkit-keyframes fadeIn {
+    0% {opacity:0;}
+    100% {opacity:1;}
+  }
+  
+  @-o-keyframes fadeIn {
+    0% {opacity:0;}
+    100% {opacity:1;}
+  }
+  
+  @-ms-keyframes fadeIn {
+    0% {opacity:0;}
+    100% {opacity:1;}
+  }
+
 /*Personal*/
 .personal{
-    background-color: aliceblue;
+    background-color: whitesmoke;
 }
 .personalhead {
     text-align: center;
@@ -116,7 +148,7 @@ nav{
     padding: 50px;
     position: absolute;
     margin-left: 36%;
-    font-size: 25;
+    font-size: 35;
    
 }
 .personalhead p{
@@ -140,10 +172,17 @@ nav{
 
 .button-text-personal-pick{
     display: inline-block;
-    background-color: cornsilk; 
+    background-color: lavender; 
     padding: 40px 40px;
     margin: 75px;
+    cursor: pointer;
+    opacity: 1;
 
+}
+
+.button-text-personal-pick:hover{
+    cursor: pointer;
+    opacity: .7;
 }
 
 .button-text-personal-pick h2,p{
@@ -157,16 +196,14 @@ nav{
   width: 400px;
   color: white;
   border: none;
-  cursor: pointer;
-  opacity: 1;
-  
-  
   
 }
+
 .button-text-personal-pick .open-button-personal-pick img {
     height: 100%;
     width: 100%;
     object-fit: cover;
+    cursor: pointer;
 }
 
 .button-text-personal-pick h2 {
@@ -187,7 +224,9 @@ nav{
   height: 100vh;
   z-index: 9;
   background: rgba(0,0,0,0.9);
+  
 }
+
 
 .form-popup-personal-pick img {
     width: 500px;
@@ -261,10 +300,6 @@ nav{
     cursor: pointer;
 }
 
-.open-button-personal-pick:hover {
-  opacity: .8;
-  cursor: pointer;
-}
 
 /* Shelf */
 
@@ -272,10 +307,17 @@ nav{
 
 .button-text-personal-shelf{
     display: inline-block;
-    background-color: cornsilk;
+    background-color: lavender;
     padding: 40px 40px;
     margin: 75px;
+    cursor: pointer;
+    opacity: 1;
 
+}
+
+.button-text-personal-shelf:hover{
+    cursor: pointer;
+    opacity: .7;
 }
 
 .button-text-personal-shelf h2,p{
@@ -290,7 +332,6 @@ nav{
   color: white;
   border: none;
   cursor: pointer;
-  opacity: 1;
   
 }
 .button-text-personal-shelf .open-button-personal-shelf img {
@@ -387,9 +428,4 @@ nav{
 .form-popup-personal-shelf .btn i:hover{
     opacity: .7;
     cursor: pointer;
-}
-
-.open-button-personal-shelf:hover {
-  opacity: .8;
-  cursor: pointer;
 }
