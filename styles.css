@@ -151,6 +151,13 @@ nav{
     font-size: 35;
    
 }
+
+@media screen and (width: 1920px) {
+    .personalhead{
+        margin-left: 39%;
+    }
+    
+}
 .personalhead p{
     margin-left: auto;
     margin-right: auto;
