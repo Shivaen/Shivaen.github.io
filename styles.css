@@ -327,12 +327,14 @@ nav{
         top: 550px;
         right: 600px
     }
+}
+
+@media screen and (width: 1920px) {
     .form-popup-personal-pick .left-icon-pick i{
         top: 550px;
         right: 1400px;
 
-    }
-    
+    } 
 }
 
 /* Shelf */
