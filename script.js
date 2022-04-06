@@ -203,3 +203,52 @@ function changeImageEDBack() {
   }
   
 }
+
+
+
+
+
+
+function openFormSP() {
+  document.getElementById("myForm-SP").style.display = "block";
+}
+
+function closeFormSP() {
+  document.getElementById("myForm-SP").style.display = "none";
+}
+
+var counter = 0;
+function changeImageSP() {
+  
+  if (counter == 0) {
+    document.getElementById("SP").src = "https://Shivaen.github.io/SP2.jpeg";
+    counter++;
+  }
+  else if (counter == 1) {
+    document.getElementById("SP").src = "https://Shivaen.github.io/SP1.jpeg";
+    counter = 0;
+  }
+  
+}
+
+var counter = 1;
+function changeImageSPBack() {
+  
+  if (counter == 1) {
+    document.getElementById("SP").src = "https://Shivaen.github.io/SP1.jpeg";
+    counter--;
+  }
+  else if (counter == 0) {
+    document.getElementById("SP").src = "https://Shivaen.github.io/SP2.jpeg";
+    counter = 1;
+  }
+  
+}
+
+function openFormMD() {
+  document.getElementById("myForm-MD").style.display = "block";
+}
+
+function closeFormMD() {
+  document.getElementById("myForm-MD").style.display = "none";
+}

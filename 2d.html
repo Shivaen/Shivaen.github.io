@@ -50,16 +50,24 @@
 
         <div class="button-text-personal-pick" onclick="openFormPick()">
             <button class="open-button-personal-pick" ><img src="https://Shivaen.github.io/Pick1.jpeg" alt=""></button>
-            <h2>Hair Pick</h2>
-            <p>Woodworking</p>
+            <h2>Tea</h2>
+            <p>Monoprint Printmaking</p>
     
     
         </div>
     
-        <div class="button-text-personal-shelf" onclick="openFormShelf()">
-            <button class="open-button-personal-shelf" ><img src="https://Shivaen.github.io/Shelf1.jpeg" alt=""></button>
-            <h2>Bookshelf</h2>
-            <p>Woodworking</p>
+        <div class="button-text-twod-SP" onclick="openFormSP()">
+            <button class="open-button-twod-SP" ><img src="https://Shivaen.github.io/SP1.jpeg" alt=""></button>
+            <h2>Portrait</h2>
+            <p>Etching Printmaking</p>
+    
+    
+        </div>
+
+        <div class="button-text-twod-MD" onclick="openFormMD()">
+            <button class="open-button-twod-MD" ><img src="https://Shivaen.github.io/midoc.png" alt=""></button>
+            <h2>MiDoc 1-Pager</h2>
+            <p>Illustrator</p>
     
     
         </div>
@@ -117,20 +125,29 @@
         
     </div>
 
-    <div class="form-popup-personal-shelf" id="myForm-shelf">
-        <h1>Bookshelf</h1>
-        <img id="Shelf"  src="https://Shivaen.github.io/Shelf1.jpeg" alt="">
-        <p>I made this simple bookshelf over the course of three days during my winter break in 2020-2021. I utilized lumber from a home improvement store. I cut everything down to the appropriate size and sanded to 220 grit. Then I stained the wood and assembled it using shelf brackets. This piece was done entirely using hand tools. </p>
+    <div class="form-popup-twod-SP" id="myForm-SP">
+        <h1>Portrait</h1>
+        <img id="SP"  src="https://Shivaen.github.io/SP1.jpeg" alt="">
+        <p>I made this piece based on a portrait someone did for me. I utilized to portrait to carve into a metal plate, which was then etched in acid. This plate was then run through the printing press to create the resulting piece. </p>
 
-        <div class = right-icon-shelf>
-            <i class="fa-regular fa-chevron-right" onclick="changeImageShelf()"></i>
+        <div class = right-icon-SP>
+            <i class="fa-regular fa-chevron-right" onclick="changeImageSP()"></i>
         </div>
 
-        <div class = left-icon-shelf>
-            <i class="fa-regular fa-chevron-left" onclick="changeImageShelfBack()"></i>
+        <div class = left-icon-SP>
+            <i class="fa-regular fa-chevron-left" onclick="changeImageSPBack()"></i>
         </div>
 
-        <button type="button" class="btn cancel" onclick="closeFormShelf()"><i class="fa-regular fa-xmark"></i></button>
+        <button type="button" class="btn cancel" onclick="closeFormSP()"><i class="fa-regular fa-xmark"></i></button>
+        
+    </div>
+
+    <div class="form-popup-twod-MD" id="myForm-MD">
+        <h1>MiDoc 1-Pager</h1>
+        <img id="MD"  src="https://Shivaen.github.io/midoc.png" alt="">
+        <p>This 1-page business document was for a team based entrepreneurship class. I made this 1-pager in about 3 hours using Adobe Illustrator. The goal was to keep things simple and communicate information in an easy to process manner. </p>
+
+        <button type="button" class="btn cancel" onclick="closeFormMD()"><i class="fa-regular fa-xmark"></i></button>
         
     </div>
 
