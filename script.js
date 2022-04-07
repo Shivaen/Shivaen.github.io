@@ -252,3 +252,115 @@ function openFormMD() {
 function closeFormMD() {
   document.getElementById("myForm-MD").style.display = "none";
 }
+
+
+
+function openFormSpider() {
+  document.getElementById("myForm-spider").style.display = "block";
+}
+
+function closeFormSpider() {
+  document.getElementById("myForm-spider").style.display = "none";
+}
+
+var counter = 0;
+function changeImageSpider() {
+  
+  if (counter == 0) {
+    document.getElementById("spider").src = "https://Shivaen.github.io/Spider2.jpeg";
+    counter++;
+  }
+  else if (counter == 1) {
+    document.getElementById("spider").src = "https://Shivaen.github.io/Spider3.jpeg";
+    counter++;
+  }
+  else if (counter == 2) {
+    document.getElementById("spider").src = "https://Shivaen.github.io/Spider4.jpeg";
+    counter++;
+  }
+  else if (counter == 3) {
+    document.getElementById("spider").src = "https://Shivaen.github.io/Spider5.jpeg";
+    counter++;
+  }
+  else if (counter == 4) {
+    document.getElementById("spider").src = "https://Shivaen.github.io/Spider6.jpeg";
+    counter++;
+  }
+  else if (counter == 5) {
+    document.getElementById("spider").src = "https://Shivaen.github.io/Spider1.jpeg";
+    counter = 0;
+  }
+}
+
+var counter = 5;
+function changeImageSpiderBack() {
+  
+  if (counter == 5) {
+    document.getElementById("spider").src = "https://Shivaen.github.io/Spider5.jpeg";
+    counter--;
+  }
+  else if (counter == 4) {
+    document.getElementById("spider").src = "https://Shivaen.github.io/Spider4.jpeg";
+    counter--;
+  }
+  else if (counter == 3) {
+    document.getElementById("spider").src = "https://Shivaen.github.io/Spider3.jpeg";
+    counter--;
+  }
+  else if (counter == 2) {
+    document.getElementById("spider").src = "https://Shivaen.github.io/Spider2.jpeg";
+    counter--;
+  }
+  else if (counter == 1) {
+    document.getElementById("spider").src = "https://Shivaen.github.io/Spider1.jpeg";
+    counter--;
+  }
+  else if (counter == 0) {
+    document.getElementById("spider").src = "https://Shivaen.github.io/Spider6.jpeg";
+    counter =5;
+  }
+  
+}
+
+function openFormLeaf() {
+  document.getElementById("myForm-leaf").style.display = "block";
+}
+
+function closeFormLeaf() {
+  document.getElementById("myForm-leaf").style.display = "none";
+}
+
+var counter = 0;
+function changeImageLeaf() {
+  
+  if (counter == 0) {
+    document.getElementById("leaf").src = "https://Shivaen.github.io/Leaf2.jpeg";
+    counter++;
+  }
+  else if (counter == 1) {
+    document.getElementById("leaf").src = "https://Shivaen.github.io/Leaf3.jpeg";
+    counter++;
+  }
+  else if (counter == 2) {
+    document.getElementById("leaf").src = "https://Shivaen.github.io/Leaf1.jpeg";
+    counter = 0;
+  }
+}
+  
+var counter = 2;
+function changeImageLeafBack() {
+    
+    if (counter == 2) {
+      document.getElementById("leaf").src = "https://Shivaen.github.io/Leaf2.jpeg";
+      counter--;
+    }
+    else if (counter == 1) {
+      document.getElementById("leaf").src = "https://Shivaen.github.io/Leaf1.jpeg";
+      counter--;
+    }
+    else if (counter == 0) {
+      document.getElementById("leaf").src = "https://Shivaen.github.io/Leaf3.jpeg";
+      counter = 2;
+    }
+    
+  }
