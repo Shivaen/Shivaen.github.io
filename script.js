@@ -254,6 +254,43 @@ function closeFormMD() {
 }
 
 
+function openFormController() {
+  document.getElementById("myForm-controller").style.display = "block";
+}
+
+function closeFormController() {
+  document.getElementById("myForm-controller").style.display = "none";
+}
+
+var counter = 0;
+function changeImageController() {
+  
+  if (counter == 0) {
+    document.getElementById("controller").src = "https://Shivaen.github.io/Controller2.png";
+    counter++;
+  }
+  else if (counter == 1) {
+    document.getElementById("controller").src = "https://Shivaen.github.io/Controller1.png";
+    counter = 0;
+  }
+  
+}
+
+var counter = 1;
+function changeImageControllerBack() {
+  
+  if (counter == 1) {
+    document.getElementById("controller").src = "https://Shivaen.github.io/Controller1.png";
+    counter--;
+  }
+  else if (counter == 0) {
+    document.getElementById("controller").src = "https://Shivaen.github.io/Controller2.png";
+    counter = 1;
+  }
+  
+}
+
+
 
 function openFormSpider() {
   document.getElementById("myForm-spider").style.display = "block";
@@ -363,4 +400,195 @@ function changeImageLeafBack() {
       counter = 2;
     }
     
+  }
+
+
+  function openFormClimber() {
+    document.getElementById("myForm-climber").style.display = "block";
+  }
+  
+  function closeFormClimber() {
+    document.getElementById("myForm-climber").style.display = "none";
+  }
+  
+  var counter = 0;
+  function changeImageClimber() {
+    
+    if (counter == 0) {
+      document.getElementById("climber").src = "https://Shivaen.github.io/Climber2.jpeg";
+      counter++;
+    }
+    else if (counter == 1) {
+      document.getElementById("climber").src = "https://Shivaen.github.io/Climber3.jpeg";
+      counter++;
+    }
+    else if (counter == 2) {
+      document.getElementById("climber").src = "https://Shivaen.github.io/Climber4.jpeg";
+      counter++;
+    }
+    else if (counter == 3) {
+      document.getElementById("climber").src = "https://Shivaen.github.io/Climber5.jpeg";
+      counter++;
+    }
+    else if (counter == 4) {
+      document.getElementById("climber").src = "https://Shivaen.github.io/Climber6.png";
+      counter++;
+    }
+    else if (counter == 5) {
+      document.getElementById("climber").src = "https://Shivaen.github.io/Climber1.jpeg";
+      counter = 0;
+    }
+  }
+  
+  var counter = 5;
+  function changeImageClimberBack() {
+    
+    if (counter == 5) {
+      document.getElementById("climber").src = "https://Shivaen.github.io/Climber5.jpeg";
+      counter--;
+    }
+    else if (counter == 4) {
+      document.getElementById("climber").src = "https://Shivaen.github.io/Climber4.jpeg";
+      counter--;
+    }
+    else if (counter == 3) {
+      document.getElementById("climber").src = "https://Shivaen.github.io/Climber3.jpeg";
+      counter--;
+    }
+    else if (counter == 2) {
+      document.getElementById("climber").src = "https://Shivaen.github.io/Climber2.jpeg";
+      counter--;
+    }
+    else if (counter == 1) {
+      document.getElementById("climber").src = "https://Shivaen.github.io/Climber1.jpeg";
+      counter--;
+    }
+    else if (counter == 0) {
+      document.getElementById("climber").src = "https://Shivaen.github.io/Climber6.png";
+      counter = 5;
+    }
+  }
+
+  function openFormRing() {
+    document.getElementById("myForm-ring").style.display = "block";
+  }
+  
+  function closeFormRing() {
+    document.getElementById("myForm-ring").style.display = "none";
+  }
+  
+  var counter = 0;
+  function changeImageRing() {
+    
+    if (counter == 0) {
+      document.getElementById("ring").src = "https://Shivaen.github.io/Ring2.jpeg";
+      counter++;
+    }
+    else if (counter == 1) {
+      document.getElementById("ring").src = "https://Shivaen.github.io/Ring3.jpeg";
+      counter++;
+    }
+    else if (counter == 2) {
+      document.getElementById("ring").src = "https://Shivaen.github.io/Ring4.jpeg";
+      counter++;
+    }
+    else if (counter == 3) {
+      document.getElementById("ring").src = "https://Shivaen.github.io/Ring5.jpeg";
+      counter++;
+    }
+    else if (counter == 4) {
+      document.getElementById("ring").src = "https://Shivaen.github.io/Ring6.png";
+      counter++;
+    }
+    else if (counter == 5) {
+      document.getElementById("ring").src = "https://Shivaen.github.io/Ring1.jpeg";
+      counter = 0;
+    }
+  }
+  
+  var counter = 5;
+  function changeImageRingBack() {
+    
+    if (counter == 5) {
+      document.getElementById("ring").src = "https://Shivaen.github.io/Ring5.jpeg";
+      counter--;
+    }
+    else if (counter == 4) {
+      document.getElementById("ring").src = "https://Shivaen.github.io/Ring4.jpeg";
+      counter--;
+    }
+    else if (counter == 3) {
+      document.getElementById("ring").src = "https://Shivaen.github.io/Ring3.jpeg";
+      counter--;
+    }
+    else if (counter == 2) {
+      document.getElementById("ring").src = "https://Shivaen.github.io/Ring2.jpeg";
+      counter--;
+    }
+    else if (counter == 1) {
+      document.getElementById("ring").src = "https://Shivaen.github.io/Ring1.jpeg";
+      counter--;
+    }
+    else if (counter == 0) {
+      document.getElementById("ring").src = "https://Shivaen.github.io/Ring6.png";
+      counter = 5;
+    }
+  }
+
+  function openFormTea() {
+    document.getElementById("myForm-tea").style.display = "block";
+  }
+  
+  function closeFormTea() {
+    document.getElementById("myForm-tea").style.display = "none";
+  }
+  
+  var counter = 0;
+  function changeImageTea() {
+    
+    if (counter == 0) {
+      document.getElementById("tea").src = "https://Shivaen.github.io/Tea2.jpeg";
+      counter++;
+    }
+    else if (counter == 1) {
+      document.getElementById("tea").src = "https://Shivaen.github.io/Tea3.jpeg";
+      counter++;
+    }
+    else if (counter == 2) {
+      document.getElementById("tea").src = "https://Shivaen.github.io/Tea4.jpeg";
+      counter++;
+    }
+    else if (counter == 3) {
+      document.getElementById("tea").src = "https://Shivaen.github.io/Tea5.jpeg";
+      counter++;
+    }
+    else if (counter == 4) {
+      document.getElementById("tea").src = "https://Shivaen.github.io/Tea1.jpeg";
+      counter = 0;
+    }
+  }
+  
+  var counter = 4;
+  function changeImageTeaBack() {
+    
+    if (counter == 4) {
+      document.getElementById("tea").src = "https://Shivaen.github.io/Tea4.jpeg";
+      counter--;
+    }
+    else if (counter == 3) {
+      document.getElementById("tea").src = "https://Shivaen.github.io/Tea3.jpeg";
+      counter--;
+    }
+    else if (counter == 2) {
+      document.getElementById("tea").src = "https://Shivaen.github.io/Tea2.jpeg";
+      counter--;
+    }
+    else if (counter == 1) {
+      document.getElementById("tea").src = "https://Shivaen.github.io/Tea1.jpeg";
+      counter--;
+    }
+    else if (counter == 0) {
+      document.getElementById("tea").src = "https://Shivaen.github.io/Tea5.jpeg";
+      counter = 4;
+    }
   }

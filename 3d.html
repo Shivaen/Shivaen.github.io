@@ -3,7 +3,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>3D Design</title>
     <link rel="stylesheet" href="styles.css">
     <script src="script.js"></script>
     <script src="https://kit.fontawesome.com/6ac40f7a12.js" crossorigin="anonymous"></script>
@@ -32,24 +32,24 @@
     </div>
    
     <div class="threed-wrapper">
-        <div class="button-text-twod-DOTS" onclick="openFormDOTS()">
-            <button class="open-button-twod-DOTS" ><img src="https://Shivaen.github.io/DOTS1.jpeg" alt=""></button>
+        <div class="button-text-threed-climber" onclick="openFormClimber()">
+            <button class="open-button-threed-climber" ><img src="https://Shivaen.github.io/Climber1.jpeg" alt=""></button>
             <h2>Don't Look Down</h2>
             <p>Digital Fabrication</p>
     
     
         </div>
     
-        <div class="button-text-twod-ED" onclick="openFormED()">
-            <button class="open-button-twod-ED" ><img src="https://Shivaen.github.io/ED1.jpeg" alt=""></button>
+        <div class="button-text-threed-ring" onclick="openFormRing()">
+            <button class="open-button-threed-ring" ><img src="https://Shivaen.github.io/Ring1.jpeg" alt=""></button>
             <h2>Ouroboros Ring</h2>
             <p>Digital Fabrication</p>
     
     
         </div>
 
-        <div class="button-text-personal-pick" onclick="openFormPick()">
-            <button class="open-button-personal-pick" ><img src="https://Shivaen.github.io/Pick1.jpeg" alt=""></button>
+        <div class="button-text-threed-controller" onclick="openFormController()">
+            <button class="open-button-threed-controller" ><img src="https://Shivaen.github.io/Controller1.png" alt=""></button>
             <h2>Disability Video Game Controller</h2>
             <p>Prototyping</p>
     
@@ -74,54 +74,54 @@
 
     </div>
     
-    <div class="form-popup-twod-DOTS" id="myForm-DOTS">
+    <div class="form-popup-threed-climber" id="myForm-climber">
         <h1>Don't Look Down</h1>
-        <img id="DOTS" src="https://Shivaen.github.io/DOTS1.jpeg" alt="">
-        <p>This print was inspired by a neon sign owned by Kenny Beats. I made it by carving out a piece of wood, inking the wood, and then running it through a printing press. I utilized a technique called a rainbow roll to get a gradient in this piece. </p>
+        <img id="climber" src="https://Shivaen.github.io/Climber1.jpeg" alt="">
+        <p>I first designed this piece in Rhino. Then I laser cut the pieces out of baltic birch. I assembled the pieces using wood glue. Some of the pieces received a finish of acrylic paint, while some received a finish of burning and linseed oil. </p>
 
-        <div class = right-icon-DOTS>
-            <i class="fa-regular fa-chevron-right" onclick="changeImageDOTS()"></i>
+        <div class = right-icon-climber>
+            <i class="fa-regular fa-chevron-right" onclick="changeImageClimber()"></i>
         </div>
 
-        <div class = left-icon-DOTS>
-            <i class="fa-regular fa-chevron-left" onclick="changeImageDOTSBack()"></i>
+        <div class = left-icon-climber>
+            <i class="fa-regular fa-chevron-left" onclick="changeImageClimberBack()"></i>
         </div>
         
-        <button type="button" class="btn cancel" onclick="closeFormDOTS()"><i class="fa-regular fa-xmark"></i></button>
+        <button type="button" class="btn cancel" onclick="closeFormClimber()"><i class="fa-regular fa-xmark"></i></button>
         
     </div>
 
-    <div class="form-popup-twod-ED" id="myForm-ED">
+    <div class="form-popup-threed-ring" id="myForm-ring">
         <h1>Ouroboros Ring</h1>
-        <img id="ED"  src="https://Shivaen.github.io/ED1.jpeg" alt="">
-        <p>This piece was inspired by the concept of ego death. This piece combined two printmaking methods -- monoprinting and relief printing. I utilized a technique called a rainbow roll to achieve the gradient. </p>
+        <img id="ring"  src="https://Shivaen.github.io/Ring1.jpeg" alt="">
+        <p>An ouroboros is a name for the symbol of a snake eating its own tail. It symbolizes cycles and rebirth among other things. I first designed this piece in Rhino. Then I 3D printed it. I invested the print and cast it in bronze. </p>
 
-        <div class = right-icon-ED>
-            <i class="fa-regular fa-chevron-right" onclick="changeImageED()"></i>
+        <div class = right-icon-ring>
+            <i class="fa-regular fa-chevron-right" onclick="changeImageRing()"></i>
         </div>
 
-        <div class = left-icon-ED>
-            <i class="fa-regular fa-chevron-left" onclick="changeImageEDBack()"></i>
+        <div class = left-icon-ring>
+            <i class="fa-regular fa-chevron-left" onclick="changeImageRingBack()"></i>
         </div>
 
-        <button type="button" class="btn cancel" onclick="closeFormED()"><i class="fa-regular fa-xmark"></i></button>
+        <button type="button" class="btn cancel" onclick="closeFormRing()"><i class="fa-regular fa-xmark"></i></button>
         
     </div>
 
-    <div class="form-popup-personal-pick" id="myForm-pick">
+    <div class="form-popup-threed-controller" id="myForm-controller">
         <h1>Disability Video Game Controller</h1>
-        <img id="Pick" src="https://Shivaen.github.io/Pick1.jpeg" alt="">
-        <p>These hair picks are made out of walnut, have a powdered silver inlay, and are finished with a natural beeswax. I cut the picks out of a solid piece of wood using a scroll saw. I sanded the piece up to 4000 grit, adding a taper along the way. The engraving for the names was done using the laser cutter and was inlayed with powdered silver and CA glue. I went with a beeswax and orange oil finish in order to make the piece safe for use on hair. </p>
+        <img id="controller" src="https://Shivaen.github.io/Controller1.png" alt="">
+        <p>This controller was designed for a client with cerebral palsy who wanted a way to play racing games. Based on and interview with him, we determined that he had good use of his feet. Therefore, along with a small team, we designed and built this video game controller for him to use with his feet. The joystick head was 3D printed and the frame for the body was laser cut.  </p>
 
-        <div class = right-icon-pick>
-            <i class="fa-regular fa-chevron-right" onclick="changeImagePick()"></i>
+        <div class = right-icon-controller>
+            <i class="fa-regular fa-chevron-right" onclick="changeImageController()"></i>
         </div>
 
-        <div class = left-icon-pick>
-            <i class="fa-regular fa-chevron-left" onclick="changeImagePickBack()"></i>
+        <div class = left-icon-controller>
+            <i class="fa-regular fa-chevron-left" onclick="changeImageControllerBack()"></i>
         </div>
         
-        <button type="button" class="btn cancel" onclick="closeFormPick()"><i class="fa-regular fa-xmark"></i></button>
+        <button type="button" class="btn cancel" onclick="closeFormController()"><i class="fa-regular fa-xmark"></i></button>
         
     </div>
 
