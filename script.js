@@ -130,7 +130,7 @@ function changeImageDOTS() {
     counter++;
   }
   else if (counter == 2) {
-    document.getElementById("Pick").src = "https://Shivaen.github.io/DOTS1.jpeg";
+    document.getElementById("DOTS").src = "https://Shivaen.github.io/DOTS1.jpeg";
     counter = 0;
   }
 
