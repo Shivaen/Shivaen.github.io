@@ -1,0 +1,1152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shiv's SF Eats</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #faf9f7;
+  --surface: #ffffff;
+  --border: #e8e4de;
+  --text: #1a1814;
+  --muted: #8a8480;
+  --accent: #7c5cbf;
+  --accent2: #9b87cc;
+  --accent-light: #f0edf9;
+  --tag-bg: #f0ede8;
+  --shadow: 0 2px 16px rgba(0,0,0,0.08);
+  --shadow-lg: 0 8px 40px rgba(0,0,0,0.14);
+}
+body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text); height:100vh; display:flex; flex-direction:column; overflow:hidden; }
+
+header { display:flex; align-items:center; justify-content:space-between; padding:0 20px; height:52px; background:var(--surface); border-bottom:1px solid var(--border); flex-shrink:0; z-index:1000; }
+.logo { font-family:'DM Serif Display',serif; font-size:1.25rem; letter-spacing:-0.01em; color:var(--text); }
+.logo em { color:var(--accent); font-style:italic; }
+.header-right { display:flex; align-items:center; gap:12px; }
+.count-badge { font-size:0.75rem; font-weight:500; color:var(--muted); background:var(--tag-bg); padding:3px 9px; border-radius:20px; }
+.legend-bar { display:flex; align-items:center; gap:7px; font-size:0.7rem; color:var(--muted); }
+.legend-bar span { display:flex; align-items:center; gap:3px; white-space:nowrap; }
+.leg-dot { width:9px; height:9px; border-radius:50%; flex-shrink:0; display:inline-block; }
+
+.controls-bar { display:flex; align-items:center; gap:8px; padding:8px 20px; background:var(--surface); border-bottom:1px solid var(--border); flex-shrink:0; overflow:hidden; }
+.search-wrap { position:relative; flex-shrink:0; }
+.search-wrap svg { position:absolute; left:9px; top:50%; transform:translateY(-50%); color:var(--muted); pointer-events:none; }
+.search-wrap input { padding:6px 10px 6px 29px; border:1px solid var(--border); border-radius:8px; font-family:inherit; font-size:0.82rem; width:190px; background:var(--bg); outline:none; transition:border-color .15s; color:var(--text); }
+.search-wrap input:focus { border-color:var(--accent); }
+.filter-scroll { display:flex; gap:5px; overflow-x:auto; flex:1; min-width:0; -webkit-overflow-scrolling:touch; cursor:grab; }
+.filter-scroll::-webkit-scrollbar { height:3px; }
+.filter-scroll::-webkit-scrollbar-track { background:transparent; }
+.filter-scroll::-webkit-scrollbar-thumb { background:var(--border); border-radius:3px; }
+.filter-scroll .filter-chip { flex-shrink:0; }
+.filter-chip { white-space:nowrap; padding:4px 11px; border:1px solid var(--border); border-radius:20px; font-family:inherit; font-size:0.77rem; cursor:pointer; background:var(--bg); color:var(--muted); transition:all .15s; flex-shrink:0; }
+.filter-chip:hover { border-color:var(--accent); color:var(--accent); }
+.filter-chip.active { background:var(--accent); border-color:var(--accent); color:#fff; }
+.sort-select { padding:5px 9px; border:1px solid var(--border); border-radius:8px; font-family:inherit; font-size:0.77rem; background:var(--bg); color:var(--text); cursor:pointer; outline:none; flex-shrink:0; }
+.add-btn { display:flex; align-items:center; gap:5px; padding:5px 12px; background:var(--accent); color:#fff; border:none; border-radius:8px; font-family:inherit; font-size:0.8rem; font-weight:500; cursor:pointer; flex-shrink:0; transition:opacity .15s; white-space:nowrap; }
+.add-btn:hover { opacity:0.88; }
+
+.main { display:flex; flex:1; overflow:hidden; }
+.sidebar { width:340px; flex-shrink:0; display:flex; flex-direction:column; border-right:1px solid var(--border); background:var(--bg); overflow:hidden; }
+.list-container { flex:1; overflow-y:auto; padding:6px; }
+.list-container::-webkit-scrollbar { width:3px; }
+.list-container::-webkit-scrollbar-thumb { background:var(--border); border-radius:3px; }
+.restaurant-card { padding:11px 13px; border-radius:9px; cursor:pointer; border:1px solid transparent; transition:all .15s; background:var(--surface); margin-bottom:4px; }
+.restaurant-card:hover { border-color:var(--border); box-shadow:var(--shadow); }
+.restaurant-card.active { border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-light); }
+.card-top { display:flex; justify-content:space-between; align-items:flex-start; gap:6px; margin-bottom:3px; }
+.card-name { font-weight:500; font-size:0.87rem; line-height:1.3; color:var(--text); }
+.card-rating { font-family:'DM Serif Display',serif; font-size:0.98rem; color:var(--accent); white-space:nowrap; flex-shrink:0; }
+.card-meta { font-size:0.74rem; color:var(--muted); display:flex; gap:6px; flex-wrap:wrap; margin-bottom:4px; }
+.card-review { font-size:0.75rem; color:var(--muted); line-height:1.5; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+.no-results { text-align:center; padding:50px 20px; color:var(--muted); font-size:0.85rem; }
+#map { flex:1; z-index:1; }
+
+.marker-pin { width:30px; height:30px; border-radius:50% 50% 50% 0; transform:rotate(-45deg); display:flex; align-items:center; justify-content:center; box-shadow:0 2px 8px rgba(0,0,0,0.25); border:2px solid rgba(255,255,255,0.9); }
+.marker-pin span { transform:rotate(45deg); font-size:0.58rem; font-weight:700; color:white; font-family:'DM Sans',sans-serif; text-shadow:0 1px 2px rgba(0,0,0,0.3); }
+
+.leaflet-popup-content-wrapper { border-radius:12px !important; box-shadow:var(--shadow-lg) !important; padding:0 !important; overflow:hidden; border:1px solid var(--border); font-family:'DM Sans',sans-serif !important; min-width:270px; max-width:310px; }
+.leaflet-popup-content { margin:0 !important; width:auto !important; }
+.leaflet-popup-tip-container { display:none; }
+.leaflet-popup-close-button { top:9px !important; right:9px !important; color:var(--muted) !important; font-size:17px !important; z-index:10; }
+.popup-inner { padding:16px 16px 14px; }
+.popup-header { display:flex; justify-content:space-between; align-items:flex-start; gap:8px; margin-bottom:8px; }
+.popup-name { font-family:'DM Serif Display',serif; font-size:1rem; line-height:1.3; color:var(--text); }
+.popup-rating { font-family:'DM Serif Display',serif; font-size:1.25rem; color:var(--accent); white-space:nowrap; flex-shrink:0; }
+.popup-tags { display:flex; gap:4px; flex-wrap:wrap; margin-bottom:9px; }
+.popup-tag { font-size:0.7rem; padding:2px 7px; border-radius:20px; background:var(--tag-bg); color:var(--muted); }
+.popup-tag.cuisine { background:var(--accent-light); color:var(--accent); }
+.popup-review { font-size:0.8rem; color:#4a4744; line-height:1.6; border-top:1px solid var(--border); padding-top:9px; max-height:130px; overflow-y:auto; }
+.popup-review::-webkit-scrollbar { width:3px; }
+.popup-review::-webkit-scrollbar-thumb { background:var(--border); }
+.popup-edit-btn { margin-top:10px; padding:5px 12px; background:var(--tag-bg); border:1px solid var(--border); border-radius:6px; font-family:inherit; font-size:0.75rem; cursor:pointer; color:var(--muted); width:100%; transition:all .15s; }
+.popup-edit-btn:hover { background:var(--accent-light); color:var(--accent); border-color:var(--accent); }
+
+.modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.45); z-index:9000; align-items:center; justify-content:center; }
+.modal-overlay.open { display:flex; }
+.modal { background:var(--surface); border-radius:16px; padding:28px; width:460px; max-width:95vw; max-height:90vh; overflow-y:auto; box-shadow:var(--shadow-lg); position:relative; }
+.modal h2 { font-family:'DM Serif Display',serif; font-size:1.3rem; margin-bottom:18px; color:var(--text); }
+.modal-close { position:absolute; top:14px; right:16px; background:none; border:none; font-size:1.4rem; cursor:pointer; color:var(--muted); line-height:1; }
+.form-row { margin-bottom:14px; }
+.form-row label { display:block; font-size:0.75rem; font-weight:500; color:var(--muted); margin-bottom:4px; text-transform:uppercase; letter-spacing:0.04em; }
+.form-row input, .form-row select, .form-row textarea { width:100%; padding:8px 11px; border:1px solid var(--border); border-radius:8px; font-family:inherit; font-size:0.85rem; background:var(--bg); outline:none; transition:border-color .15s; color:var(--text); }
+.form-row input:focus, .form-row select:focus, .form-row textarea:focus { border-color:var(--accent); }
+.form-row textarea { resize:vertical; min-height:80px; }
+.form-row-2 { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:14px; }
+.map-pick-area { border:1px solid var(--border); border-radius:8px; overflow:hidden; height:210px; margin-bottom:5px; }
+#pickMap { height:100%; width:100%; }
+.map-pick-hint { font-size:0.74rem; color:var(--muted); margin-bottom:14px; }
+.coord-display { font-size:0.73rem; color:var(--accent); font-weight:500; margin-top:3px; }
+.btn-row { display:flex; gap:8px; justify-content:flex-end; margin-top:6px; align-items:center; }
+.btn-cancel { padding:8px 18px; background:var(--tag-bg); border:1px solid var(--border); border-radius:8px; font-family:inherit; font-size:0.85rem; cursor:pointer; color:var(--muted); }
+.btn-cancel:hover { border-color:var(--muted); }
+.btn-save { padding:8px 20px; background:var(--accent); border:none; border-radius:8px; font-family:inherit; font-size:0.85rem; font-weight:500; cursor:pointer; color:#fff; }
+.btn-save:hover { opacity:0.88; }
+.btn-delete { padding:8px 14px; background:var(--accent-light); border:1px solid #c9b8e8; border-radius:8px; font-family:inherit; font-size:0.85rem; cursor:pointer; color:var(--accent); margin-right:auto; }
+.btn-delete:hover { background:#e4daf5; }
+
+
+.rating-guide-btn {
+  display:flex; align-items:center; gap:5px;
+  padding:4px 10px; border:1px solid var(--border); border-radius:20px;
+  font-family:'DM Sans',sans-serif; font-size:0.75rem; font-weight:500;
+  background:var(--tag-bg); color:var(--muted); cursor:pointer;
+  transition:all .15s; white-space:nowrap;
+}
+.rating-guide-btn:hover { border-color:var(--accent); color:var(--accent); background:var(--accent-light); }
+
+.guide-modal { max-width:480px; }
+.guide-subtitle { font-size:0.82rem; color:var(--muted); margin-bottom:18px; line-height:1.6; }
+.guide-table { display:flex; flex-direction:column; gap:2px; }
+.guide-row { display:grid; grid-template-columns:100px 1fr; gap:12px; align-items:center; padding:8px 10px; border-radius:8px; font-size:0.82rem; line-height:1.5; }
+.guide-row:hover { background:var(--bg); }
+.guide-row-header { font-size:0.72rem; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:var(--muted); padding-bottom:4px; }
+.guide-row-header:hover { background:none; }
+.guide-score { display:inline-flex; align-items:center; justify-content:center; padding:4px 8px; border-radius:20px; font-size:0.75rem; font-weight:700; color:#fff; text-align:center; white-space:nowrap; }
+.guide-row-top { border-top:1px solid var(--border); margin-top:4px; padding-top:12px; }
+
+@media (max-width:700px) {
+  .rating-guide-btn span { display:none; }
+  .rating-guide-btn { padding:4px 8px; }
+  .guide-row { grid-template-columns:90px 1fr; font-size:0.8rem; }
+}
+
+
+.filter-scroll-wrap { display:flex; align-items:center; flex:1; min-width:0; position:relative; gap:4px; }
+.filter-arrow {
+  display:flex; align-items:center; justify-content:center;
+  width:26px; height:26px; flex-shrink:0;
+  border:1px solid var(--border); border-radius:50%;
+  background:var(--surface); color:var(--muted);
+  cursor:pointer; transition:all .15s;
+  box-shadow:0 1px 4px rgba(0,0,0,0.07);
+}
+.filter-arrow:hover { border-color:var(--accent); color:var(--accent); background:var(--accent-light); }
+.filter-arrow:disabled { opacity:0.3; cursor:default; pointer-events:none; }
+.filter-scroll { display:flex; gap:5px; overflow-x:auto; flex:1; min-width:0; -webkit-overflow-scrolling:touch; scroll-behavior:smooth; }
+.filter-scroll::-webkit-scrollbar { height:3px; }
+.filter-scroll::-webkit-scrollbar-track { background:transparent; }
+.filter-scroll::-webkit-scrollbar-thumb { background:var(--border); border-radius:3px; }
+.filter-scroll .filter-chip { flex-shrink:0; }
+
+@media (max-width:700px) {
+  .filter-arrow { display:none; }
+  .filter-scroll-wrap { gap:0; }
+}
+
+/* ── Mobile ─────────────────────────────────────────────────── */
+.mob-list-btn { display:none; }
+.bottom-sheet { display:none; }
+.sheet-backdrop { display:none; }
+
+@media (max-width:700px) {
+  header { height:48px; padding:0 14px; }
+  .logo { font-size:1.1rem; }
+  .legend-bar { display:none; }
+
+  .controls-bar { padding:7px 12px; gap:6px; }
+  .search-wrap input { width:150px; font-size:0.78rem; }
+  .filter-scroll { display:none; }
+  .sort-select { display:none; }
+  .add-btn { padding:6px 10px; border-radius:8px; font-size:0.75rem; }
+
+  .main { position:relative; }
+  .sidebar { display:none; }
+  #map { width:100%; height:100%; }
+
+  .mob-list-btn {
+    display:flex !important;
+    position:fixed; bottom:22px; left:50%; transform:translateX(-50%);
+    z-index:1100; background:var(--accent); color:#fff;
+    border:none; border-radius:24px; padding:11px 24px;
+    font-family:'DM Sans',sans-serif; font-size:0.85rem; font-weight:500;
+    box-shadow:0 4px 20px rgba(0,0,0,0.25); cursor:pointer;
+    align-items:center; gap:7px; white-space:nowrap;
+  }
+
+  .sheet-backdrop {
+    display:block !important; position:fixed; inset:0; z-index:1190;
+    background:rgba(0,0,0,0.3); opacity:0; pointer-events:none;
+    transition:opacity .25s;
+  }
+  .sheet-backdrop.open { opacity:1; pointer-events:all; }
+
+  .bottom-sheet {
+    display:flex !important; flex-direction:column;
+    position:fixed; bottom:0; left:0; right:0; z-index:1200;
+    background:var(--surface); border-radius:20px 20px 0 0;
+    box-shadow:0 -4px 30px rgba(0,0,0,0.15);
+    transform:translateY(100%); transition:transform 0.3s cubic-bezier(.4,0,.2,1);
+    max-height:78vh;
+  }
+  .bottom-sheet.open { transform:translateY(0); }
+
+  .sheet-handle-row {
+    display:flex; justify-content:center; padding:10px 16px 4px; flex-shrink:0;
+  }
+  .sheet-handle { width:36px; height:4px; background:var(--border); border-radius:4px; }
+
+  .sheet-header {
+    display:flex; align-items:center; justify-content:space-between;
+    padding:6px 16px 10px; border-bottom:1px solid var(--border);
+    flex-shrink:0; gap:8px;
+  }
+  .sheet-title { font-family:'DM Serif Display',serif; font-size:0.95rem; }
+  .sheet-meta { display:flex; align-items:center; gap:8px; }
+  .sheet-count { font-size:0.73rem; color:var(--muted); }
+  .sheet-close-btn {
+    background:none; border:none; font-size:1.3rem; cursor:pointer;
+    color:var(--muted); line-height:1; padding:0 2px;
+  }
+  .sheet-sort { padding:5px 8px; border:1px solid var(--border); border-radius:8px;
+    font-family:inherit; font-size:0.75rem; background:var(--bg); color:var(--text);
+    cursor:pointer; outline:none;
+  }
+  .sheet-filters-row {
+    display:flex; gap:5px; overflow-x:auto; padding:8px 12px;
+    border-bottom:1px solid var(--border); flex-shrink:0;
+  }
+  .sheet-filters-row::-webkit-scrollbar { display:none; }
+  .sheet-list { flex:1; overflow-y:auto; padding:6px; -webkit-overflow-scrolling:touch; }
+  .sheet-list::-webkit-scrollbar { width:3px; }
+  .sheet-list::-webkit-scrollbar-thumb { background:var(--border); border-radius:3px; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Shiv's <em>SF Eats</em></div>
+  <div class="header-right">
+    <button class="rating-guide-btn" id="openGuideBtn" title="How I rate">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+      How I Rate
+    </button>
+    <div class="legend-bar">
+      <span><i class="leg-dot" style="background:#d93b2b"></i>≤5</span>
+      <span><i class="leg-dot" style="background:#f59500"></i>5.5</span>
+      <span><i class="leg-dot" style="background:#f5c000"></i>6</span>
+      <span><i class="leg-dot" style="background:#b8d930"></i>7</span>
+      <span><i class="leg-dot" style="background:#52bb5c"></i>8</span>
+      <span><i class="leg-dot" style="background:#1e7e3e"></i>9+</span>
+    </div>
+    <span class="count-badge" id="visibleCount">— spots</span>
+  </div>
+</header>
+
+<div class="controls-bar">
+  <div class="search-wrap">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+    <input type="text" id="search" placeholder="Search…">
+  </div>
+  <div class="filter-scroll-wrap">
+    <button class="filter-arrow filter-arrow-left" id="filterLeft" aria-label="Scroll left">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+    </button>
+    <div class="filter-scroll" id="cuisineFilters">
+      <button class="filter-chip active" data-cuisine="all">All</button>
+    </div>
+    <button class="filter-arrow filter-arrow-right" id="filterRight" aria-label="Scroll right">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+    </button>
+  </div>
+  <select class="sort-select" id="sortSelect">
+    <option value="rating">Top Rated</option>
+    <option value="name">A → Z</option>
+    <option value="cost">Price ↑</option>
+  </select>
+  <button class="add-btn" id="openAddBtn">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+    Add Restaurant
+  </button>
+</div>
+
+<div class="main">
+  <div class="sidebar">
+    <div class="list-container" id="listContainer"></div>
+  </div>
+  <div id="map"></div>
+</div>
+
+<!-- Rating Guide Modal -->
+<div class="modal-overlay" id="guideOverlay">
+  <div class="modal guide-modal">
+    <button class="modal-close" id="guideClose">×</button>
+    <h2>How I Rate</h2>
+    <p class="guide-subtitle">Every score is based on the overall food quality, seasoning, technique, and value. Here's what each range means:</p>
+    <div class="guide-table">
+      <div class="guide-row guide-row-header">
+        <span>Score</span>
+        <span>What it means</span>
+      </div>
+      <div class="guide-row">
+        <span class="guide-score" style="background:#d93b2b">0 – 1.9</span>
+        <span>Inedible trash not fit for human consumption</span>
+      </div>
+      <div class="guide-row">
+        <span class="guide-score" style="background:#e05030">2.0 – 2.9</span>
+        <span>Can be eaten in worst case scenarios but you will suffer</span>
+      </div>
+      <div class="guide-row">
+        <span class="guide-score" style="background:#e85e20">3.0 – 3.9</span>
+        <span>Horrible food but there's worse out there</span>
+      </div>
+      <div class="guide-row">
+        <span class="guide-score" style="background:#f06b00">4.0 – 4.9</span>
+        <span>Bad food but edible, possibly some redeeming qualities</span>
+      </div>
+      <div class="guide-row">
+        <span class="guide-score" style="background:#f59500">5.0 – 5.9</span>
+        <span>Mediocre food but certainly not bad</span>
+      </div>
+      <div class="guide-row">
+        <span class="guide-score" style="background:#f5c000">6.0 – 6.9</span>
+        <span>Decent food. Not bad if you're in the area or specifically craving something. This would be a mid local spot.</span>
+      </div>
+      <div class="guide-row">
+        <span class="guide-score" style="background:#b8d930; color:#333">7.0 – 7.4</span>
+        <span>Good food if you're in the area. This would be considered a solid local spot.</span>
+      </div>
+      <div class="guide-row">
+        <span class="guide-score" style="background:#8ecf47; color:#333">7.5 – 7.9</span>
+        <span>Great food if you're in the area. This would be considered an above average local spot.</span>
+      </div>
+      <div class="guide-row">
+        <span class="guide-score" style="background:#52bb5c">8.0 – 8.4</span>
+        <span>Excellent food, worth going a little bit out of your way (15–30 minutes)</span>
+      </div>
+      <div class="guide-row">
+        <span class="guide-score" style="background:#2ea84f">8.5 – 8.9</span>
+        <span>Amazing food, worth driving 30–60 minutes</span>
+      </div>
+      <div class="guide-row guide-row-top">
+        <span class="guide-score" style="background:#1e7e3e">9+</span>
+        <span>Plan your day around it, worth driving 1hr+ for</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Mobile bottom sheet -->
+<div class="sheet-backdrop" id="sheetBackdrop"></div>
+<button class="mob-list-btn" id="mobListBtn">
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><circle cx="3" cy="6" r="1" fill="currentColor"/><circle cx="3" cy="12" r="1" fill="currentColor"/><circle cx="3" cy="18" r="1" fill="currentColor"/></svg>
+  Browse List
+</button>
+<div class="bottom-sheet" id="bottomSheet">
+  <div class="sheet-handle-row"><div class="sheet-handle"></div></div>
+  <div class="sheet-header">
+    <span class="sheet-title">Restaurants</span>
+    <div class="sheet-meta">
+      <span class="sheet-count" id="sheetCount"></span>
+      <select class="sheet-sort" id="sheetSort">
+        <option value="rating">Top Rated</option>
+        <option value="name">A → Z</option>
+        <option value="cost">Price ↑</option>
+      </select>
+      <button class="sheet-close-btn" id="sheetClose">×</button>
+    </div>
+  </div>
+  <div class="sheet-filters-row" id="sheetFilters">
+    <button class="filter-chip active" data-cuisine="all">All</button>
+  </div>
+  <div class="sheet-list" id="sheetList"></div>
+</div>
+
+
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <button class="modal-close" id="modalClose">×</button>
+    <h2 id="modalTitle">Add Restaurant</h2>
+    <div class="form-row">
+      <label>Restaurant Name *</label>
+      <input type="text" id="fName" placeholder="e.g. Tartine Bakery">
+    </div>
+    <div class="form-row-2">
+      <div class="form-row" style="margin-bottom:0">
+        <label>Rating (out of 10)</label>
+        <input type="text" id="fRating" placeholder="e.g. 8.5">
+      </div>
+      <div class="form-row" style="margin-bottom:0">
+        <label>Cuisine Type</label>
+        <input type="text" id="fCuisine" placeholder="e.g. Italian">
+      </div>
+    </div>
+    <div class="form-row-2">
+      <div class="form-row" style="margin-bottom:0">
+        <label>Neighborhood</label>
+        <input type="text" id="fHood" placeholder="e.g. Mission">
+      </div>
+      <div class="form-row" style="margin-bottom:0">
+        <label>City</label>
+        <input type="text" id="fCity" placeholder="e.g. SF">
+      </div>
+    </div>
+    <div class="form-row">
+      <label>Price Range</label>
+      <select id="fCost">
+        <option value="$">$ — Cheap eats</option>
+        <option value="$$" selected>$$ — Mid range</option>
+        <option value="$$$">$$$ — Pricey</option>
+        <option value="$$$$">$$$$ — Splurge</option>
+      </select>
+    </div>
+    <div class="form-row">
+      <label>Review / Notes</label>
+      <textarea id="fReview" placeholder="What did you think? What to order?"></textarea>
+    </div>
+    <div class="form-row">
+      <label>Pin Location — click map to place</label>
+      <div class="map-pick-area"><div id="pickMap"></div></div>
+      <div class="map-pick-hint">Click anywhere on the map to drop the pin, or drag it to adjust.</div>
+      <div class="coord-display" id="coordDisplay">No location set yet — click the map above</div>
+    </div>
+    <div class="btn-row">
+      <button class="btn-delete" id="btnDelete" style="display:none">Delete</button>
+      <button class="btn-cancel" id="btnCancel">Cancel</button>
+      <button class="btn-save" id="btnSave">Save</button>
+    </div>
+  </div>
+</div>
+
+<script>
+function getRatingColor(r) {
+  // Smooth gradient: red (≤4) → orange (5s) → yellow (6s) → yellow-green (7s) → green (8s+)
+  if (r >= 9.0) return '#1e7e3e';   // deep green
+  if (r >= 8.5) return '#2ea84f';   // green
+  if (r >= 8.0) return '#52bb5c';   // light green
+  if (r >= 7.5) return '#8ecf47';   // yellow-green
+  if (r >= 7.0) return '#b8d930';   // lime
+  if (r >= 6.5) return '#e0d816';   // yellow
+  if (r >= 6.0) return '#f5c000';   // amber-yellow
+  if (r >= 5.5) return '#f59500';   // orange
+  if (r >= 5.0) return '#f06b00';   // deep orange
+  return '#d93b2b';                  // red
+}
+
+const HOODS = {
+  "Mission":[37.7599,-122.4148],"North Beach":[37.8060,-122.4103],
+  "Richmond":[37.7786,-122.4671],"Central Richmond":[37.7796,-122.4769],
+  "Chinatown":[37.7941,-122.4078],"SOMA":[37.7785,-122.3948],
+  "SoMa":[37.7785,-122.3948],"Tenderloin":[37.7837,-122.4128],
+  "Japantown":[37.7851,-122.4294],"JapanTown":[37.7851,-122.4294],
+  "Japan Town":[37.7851,-122.4294],"Hayes Valley":[37.7759,-122.4245],
+  "Castro":[37.7609,-122.4350],"Noe Valley":[37.7502,-122.4334],
+  "Marina":[37.8030,-122.4360],"Pacific Heights":[37.7925,-122.4382],
+  "Western Addition":[37.7800,-122.4342],"Fillmore District":[37.7843,-122.4335],
+  "FiDi":[37.7946,-122.3999],"FIDI":[37.7946,-122.3999],
+  "Fidi":[37.7946,-122.3999],"Union Square":[37.7880,-122.4074],
+  "Sunset":[37.7532,-122.4769],"Inner Sunset":[37.7598,-122.4682],
+  "Outer Sunset":[37.7492,-122.5047],"Excelsior":[37.7248,-122.4239],
+  "Exclesior":[37.7248,-122.4239],"Bernal Heights":[37.7398,-122.4148],
+  "Potrero Hill":[37.7615,-122.4000],"Protero Hill":[37.7615,-122.4000],
+  "Dogpatch":[37.7578,-122.3877],"Bayview":[37.7274,-122.3872],
+  "Presidio":[37.8000,-122.4669],"Alamo Square":[37.7762,-122.4350],
+  "Nob Hill":[37.7930,-122.4161],"Civic Center":[37.7793,-122.4194],
+  "Haight-Ashbury":[37.7692,-122.4481],"Haight":[37.7692,-122.4481],
+  "Haight Ashbury":[37.7692,-122.4481],"Duboce Triangle":[37.7700,-122.4317],
+  "Glen Park":[37.7330,-122.4340],"Ingleside":[37.7217,-122.4453],
+  "Cow Hollow":[37.7986,-122.4393],"Cole Valley":[37.7658,-122.4490],
+  "Mission Bay":[37.7726,-122.3924],"West Portal":[37.7401,-122.4659],
+  "Sunset/Richmond":[37.7663,-122.4719],"Polk Gulch":[37.7918,-122.4218],
+  "Russian Hill":[37.8010,-122.4194],"Design District":[37.7672,-122.4033],
+  "Ferry Building":[37.7955,-122.3937],"Embarcadero":[37.7955,-122.3937],
+  "Fisherman's Wharf":[37.8080,-122.4177],"Outer Richmond":[37.7796,-122.4924],
+  "North Berkeley":[37.8830,-122.2840],"Stonestown":[37.7269,-122.4762],
+  "Berkeley":[37.8716,-122.2727],"Oakland":[37.8044,-122.2712],
+  "Napa":[38.2975,-122.2869],"Sausalito":[37.8590,-122.4852],
+  "South SF":[37.6547,-122.4077],"Daly City":[37.7041,-122.4627],
+  "Palo Alto":[37.4419,-122.1430],"Santa Clara":[37.3541,-121.9552],
+  "Burlingame":[37.5842,-122.3660],"Tahoe":[38.9399,-119.9772],
+  "Mountain View":[37.3861,-122.0839],"San Jose":[37.3382,-121.8863],
+  "Santanna Row":[37.3205,-121.9493],"Santa Cruz":[36.9741,-122.0308],
+  "San Carlos":[37.5070,-122.2605]
+};
+function getCoords(hood, city) {
+  if (HOODS[hood]) return [...HOODS[hood]];
+  if (HOODS[city]) return [...HOODS[city]];
+  return null;
+}
+
+const SEED = [
+  ["4505 Burgers & BBQ","6.6","BBQ","Alamo Square","SF","$$","Ribs were unimpressive, but decent. Burger was solid but under seasoned. Good fries, like McDonald's but thicker."],
+  ["A La Turca","8.3","Turkish","Civic Center","SF","$$","Great pide and hummus. The meat is grilled over charcoal and seasoned extremely well. Excellent authentic Turkish spot worth coming back to."],
+  ["Aaha Indian Cuisine","8.1","Indian","Mission","SF","$$","Great price, excellent dosas, will definitely be back."],
+
+  ["Akikos Sushi Bar","8.8","Sushi","Union Square","SF","$$$","Extremely fresh fish and seafood prepared in expert manner. Very simple — no frills lets the seafood shine. Incredible scallops. Fish to rice ratio is perfect."],
+  ["Akira Japanese Restaurant","7.9","Sushi","Japantown","SF","$$","Super solid sushi spot, more lowkey and not too pricey."],
+  ["Al Carajo","8.4","Mexican","Mission","SF","$","Best breakfast burrito I've had in SF. Yucatán menu is super unique and slaps. Attention to detail is high and everything is seasoned perfectly."],
+  ["Alimentos","7.7","Sandwich","North Beach","SF","$","Great sandos but could use more meat. Really well seasoned throughout and not shy on flavor."],
+  ["Amoura","6.8","Mediterranean","South SF","South SF","$$","Basic Mediterranean food, decent option if in the area."],
+  ["Anthony's Cookies","7.2","Dessert","Mission","SF","$","A bit too crispy for my liking and not enough of a butterscotch flavor."],
+  ["AP's Cafe","7.3","Empanadas","Noe Valley","SF","$","Rock solid empanadas. Seasoned well, crispy crackling exterior, wide selection of flavors."],
+  ["Aria","6.8","Korean","Nob Hill","SF","$","Korean fried chicken. Chicken has too much breading and not crispy enough. Side sauces are good tho."],
+  ["Arizmendi","8.1","Bakery","Mission","SF","$","Bread and pizza really shine here. The bread is well flavored and crusty, the pizza is creative with a good dough base."],
+  ["Arsicault","9.3","Bakery","Richmond","SF","$$","Quite possibly the best croissant I've ever had. Shatteringly crisp on the outside, flaky and moist on the inside. The chocolate chip cookie is also legendary."],
+  ["Aziza","8.5","Moroccan","Richmond","SF","$$$","Amazing. Kefta and lamb shank were to die for. Cornbread with harissa butter goes crazy. Spreads, dates, pine nuts — it was all there."],
+  ["B. Patisserie","8.4","Dessert","Pacific Heights","SF","$","Excellent pastries. The chocolate chip cookie is one of the best in the city. The banana chocolate almond croissant is something I would go back for alone."],
+  ["Bahn Mi Viet","7.8","Vietnamese","Alamo Square","SF","$","Well worth the price. Beef was pretty tender with good flavor. Bread was awesome — perfect blend of soft and crunchy."],
+  ["Bansang","7.9","Korean","Japantown","SF","$$$","Fun and creative Korean fusion dishes. Amazing standouts — unique mulwhe noodles and the perfectly cooked galbi. Pork was also wonderful."],
+  ["Basa Seafood Express","8.6","Seafood","Mission","SF","$","Incredible value. High quality sushi and poke at a low price. Get the spicy salmon poke and cry tears of joy."],
+  ["Base Camp","7.3","Nepali","Union Square","SF","$$","Quality Nepali food."],
+  ["Beeps Burgers","6.7","Burger","Ingleside","SF","$$","Considered an SF institution but overrated. Burger has nice maillard reaction but is very underseasoned. Curly fries are nice and crisp."],
+  ["Beit Rima","6.7","Middle Eastern","Duboce Triangle","SF","$$","The meat and rice were excellent. The hummus was grainy and overly acidic. Falafel and halloumi were decent but unremarkable."],
+  ["Besharam","9.2","Indian","Dogpatch","SF","$$$","Only vegetarian but the flavors are so spectacular it doesn't even matter."],
+  ["Big Apple Pizza N Grill","6.3","American","Tenderloin","SF","$$","Chopped cheese, fries and other similar food. Food was lacking seasoning and flavor."],
+  ["Bodega North Beach","7.4","Breakfast","North Beach","SF","$$","Really solid breakfast burrito worth waking up for. Salsa is fantastic — smoky and slightly sweet."],
+  ["Bones Bagels","7.6","Bagels","Noe Valley","SF","$","Toppings and cream cheese are amazingly fresh and bright. The bagels are decent but have room for improvement. Also they have a seriously banging sourdough chocolate chip cookie."],
+  ["Bottega","8.0","Italian","Mission","SF","$$","Roman style pizza has a nice crispy crust. Great choice for pasta and pizza."],
+  ["Breadbelly","8.4","Breakfast","Richmond","SF","$$","Really creative and punchy breakfast/lunch and pastries. Fun and well thought out flavor combos. A bit pricey but so worth it."],
+  ["Breakfast Little","8.2","Breakfast","Mission","SF","$$","Well balanced breakfast burrito. Still like Al Carajo's a little better."],
+  ["Brenda's French Soul Food","6.6","Cajun/Southern","Tenderloin","SF","$$","The gumbo was pretty damn good, but everything else was meh. Beignets were quite dense. Po boy was lacking seasoning."],
+  ["Brothers Restaurant","8.2","Korean","Richmond","SF","$$$","KBBQ that uses real charcoal — this really improves the flavor. The meat is good quality and the marinades are on point."],
+  ["Burma Love","7.5","Burmese","Mission","SF","$$","Very tasty Burmese food, super unique."],
+  ["Buster's Cheesesteaks","5.4","American","North Beach","SF","$","Meat under seasoned, bread dry, overall lack of flavor."],
+  ["Capital Restaurant","8.4","Chinese","Chinatown","SF","$$","Amazing Cantonese food with signature dishes worth going out of your way for. Salt and pepper wings, capital pork chops, mushroom with beef are all banging."],
+  ["Capo","8.4","Pizza","North Beach","SF","$$","Owned by Tony. Focused on Detroit and Chicago style pizza. The Chicago tavern style is the highlight here."],
+  ["Caseys Pizza","7.1","Pizza","Mission Bay","SF","$$","Solid pie, kinda a cross between NY and neapolitan. Dough too chewy and not crispy enough."],
+  ["Cheeseboard Collective","8.1","Pizza","Berkeley","Berkeley","$","Pretty much everything I said about Arizmendi is applicable here."],
+  ["Cheung Hing","7.5","Chinese","Richmond","SF","$$","Really solid Cantonese BBQ."],
+  ["Chicken G's","7.7","Fried Chicken","FiDi","SF","$$","Fried chicken definitely shines here. Tender meat, an intense flaky crispy, and a marinade that adds a distinct flavor and spice."],
+  ["China Live","7.3","Chinese/Dim Sum","North Beach","SF","$$$","Classic spot with interesting dishes that are well executed. Definitely a bit americanized."],
+  ["Cholita Linda's","7.3","Cuban","Ferry Building","SF","$","Rock solid Cuban, not much else worth coming here for."],
+  ["Chong Qing Xiao Mian","7.9","Sichuan","North Beach","SF","$","Can't beat the price to quality ratio, excellent bowl of hot and spicy noodle soup."],
+  ["Chubby Noodle","7.3","Asian Fusion","North Beach","SF","$$","Tasty noodles but there are better options in neighboring Chinatown."],
+  ["Ciccio","8.8","Pizza","Napa","Napa","$$","Great attention to detail and utilization of fresh ingredients. The tomatoes are just absurdly flavorful and the salt levels are perfect."],
+  ["Cocobang","7.2","Korean","Tenderloin","SF","$$","Elite spot for late night food. Solid KFC and Korean staples. The grilled short rib was the standout."],
+  ["Copra","8.9","Indian","Japantown","SF","$$$","WOW. The flavors are bold, innovative, and bright. They don't hold back. So many dishes reinterpreted and thrown back at you in new ways."],
+  ["Cordon Bleu","8.1","Vietnamese","Nob Hill","SF","$","The chicken is tender, well seasoned, and nicely charred. Imperial roll is amongst the best I've had. Great value."],
+  ["Cracked and Battered","8.2","Breakfast","Potrero Hill","SF","$","Spicy fried chicken eggs benedict: chicken was crispy and flavorful, eggs perfectly cooked, salt on point, biscuit was moist. Would def go back."],
+  ["Crepevine","6.7","French/American","Burlingame","Burlingame","$$","Pretty average crepes. Decent quality and good flavors but the crepe itself is average. Good fries."],
+  ["Dabao","6.2","Indonesian","SOMA","SF","$$","Flavors just weren't hitting. Potato puff was weirdly sweet. The fried chicken was good tho."],
+  ["Daeho Kalbijim & Beef Soup","8.7","Korean","Japantown","SF","$$","Absolutely fantastic. This place is an experience. Go hungry and with a group. Get the kalbijjim with extra meat, glass noodles, rice cakes, cheese."],
+  ["Dalida","9.2","Mediterranean","Presidio","SF","$$$","Mediterranean food that draws inspiration from multiple cultures. Everything is executed at such a high level. Pork cheek souvlaki is divine. Lamb shoulder was among the most tender and juicy I've had."],
+  ["De Afghanan Kabob House","8.3","Afghani","FiDi","SF","$$","The chabli kebab was elite and the lamb/chicken were both very good. Tender and well seasoned."],
+  ["Deli Board","9.1","Sandwiches","SOMA","SF","$$","Expensive but crazy good. The sandwiches are stuffed with hot fresh pastrami, brisket, corned beef, etc. Best sando in SF so far."],
+  ["Detroit Square Pizza","6.7","Pizza","Mission","SF","$","Pretty solid, a bit doughy, could be crispier. Sauce and cheese were nice tho. Great drunk pizza."],
+  ["Dolores Deluxe","8.2","Sandwich","Mission","SF","$","Had a breakfast sando with pork roll in it (!!) — only place I know of in SF that does this. Fun sando, they put tortilla chips in it."],
+  ["Don Chuys Mexi-Mercado","8.2","Mexican","Excelsior","SF","$","Such a well executed burrito. The carnitas are beyond awesome, super crispy almost like pork candy. Get it spicy and with everything. Local Gem."],
+  ["Don Pepe's","6.8","Mexican","Burlingame","Burlingame","$$","Solid classic Mexican food. Bean dip and guacamole were really good."],
+  ["Dumpling Home","8.5","Dim Sum","Hayes Valley","SF","$$","Dim sum at pretty much its best. The xiao long bao is thin and bursting with flavor. The sesame dumplings are silky smooth and an experience."],
+  ["Dumpling House","7.4","Chinese","Castro","SF","$$","Solid neighborhood spot for dim sum."],
+  ["Dumpling Specialist","8.2","Chinese","Sunset","SF","$","Pan fried pork buns, har gow, and xiao long bao stood out — slightly chewy dough, moist and well flavored interiors."],
+  ["Dumpling Zone","8.2","Chinese","West Portal","SF","$$","A true local gem. Excellent dim sum and noodle soup."],
+  ["El Castillito","5.7","Mexican","Duboce Triangle","SF","$","Meat was not fresh, cheese wasn't melted. Also so so so bland in every way."],
+  ["El Farolito","8.4","Mexican","Mission","SF","$","Open late. This is the spot for mission style burritos. The rice is perfectly seasoned, the meat is tender, and the ratios are perfect."],
+  ["El Gallo Giro","8.4","Mexican","Mission","SF","$","Cheap tacos that come loaded with meat. All the meats are very well flavored and the salsa is amazing. The carnitas are some of the best I've had."],
+  ["El Mil Amores","8.6","Mexican","Mission","SF","$$","Def lives up to the hype. The salsas are punchy and flavorful. The eggs are fluffy and soft. The chilaquiles are addicting. Great attention to detail all around."],
+  ["Elephant Sushi","7.7","Sushi","Hayes Valley","SF","$$$","Some creative rolls here. Monkfish liver was awesome. Good spot for less traditional sushi."],
+  ["Empire Pizza","6.7","Pizza","Union Square","SF","$$","Decent pizza. Full pie was a little soggy and too many cherry peppers. Sauce tasted too much like marinara."],
+  ["Falafel City","7.3","Middle Eastern","Tenderloin","SF","$","Great value and the falafels are amazing. Meat is solid but nothing special."],
+  ["Fil-Am Cuisine","8.3","Filipino","Daly City","Daly City","$","Absolutely smackin and hella cheap too. Need to get there early enough to try their pancit."],
+  ["Fiorella","7.9","Italian","Sunset","SF","$$","Pizza is nice and crusty, kinda a mix of neo and NY. Flavorful toppings. Cheese is good, sauce was a little sweet."],
+  ["Fire Sign Cafe","7.6","Breakfast","Tahoe","Tahoe","$$","Great diner food with awesome vibe. Biscuit a little dry. Chicken fried steak was tender and seasoned. Great sausage gravy."],
+  ["Fish.","7.0","Seafood","Sausalito","Sausalito","$$","Fresh quality seafood. A little under seasoned. Awesome ceviche. Tuna melt absolutely slapped."],
+  ["Fleming's Prime Steakhouse","8.2","Steak","Santa Clara","Santa Clara","$$$","Quality meat and food."],
+  ["Flour + Water Pizzeria","7.7","Italian","North Beach","SF","$$","Good flavors with some unique interesting combos. Dough was solid but a little too chewy and not crispy enough. Tasty though and would come again."],
+  ["Fondue Chinoise","7.5","Chinese","North Beach","SF","$$","Solid hotpot, not gonna blow you away but good quality meat and ingredients. Flavor of the broth could've been better."],
+  ["Funky Elephant","8.4","Thai","Mission","SF","$$","Fun Thai flavors that are definitely a bit unique. Party wings were a standout with a sticky spicy sauce. Pad thai was a flavor bomb."],
+  ["Gao Viet","8.7","Vietnamese","Sunset","SF","$$","Creative but authentic Vietnamese food. Had dishes I've never seen before. Large menu, want to try everything."],
+  ["Garaje","6.8","Mexican","Mission","SF","$","Solid burgers and fun zapotes (panini-burrito cross). Just nothing special."],
+  ["Gioia Pizzeria","7.6","Pizza","Hayes Valley","SF","$$","Pretty good overall, would go back."],
+  ["Go Duck Yourself Sitdown","8.9","Chinese","Bernal Heights","SF","$$","The duck is even more juicy and the char siu is like candied pork. The salt and pepper wings will blow your mind."],
+  ["Go Duck Yourself Takeout","8.8","Chinese","Chinatown","SF","$","Amazingly flavorful and tender duck, simple and perfect. Pork is also divine."],
+  ["Golden Boy Pizza","6.8","Pizza","North Beach","SF","$","Solid focaccia style pizza, almost like a Sicilian. Crisp on the bottom but nice and fluffy in the middle."],
+  ["Golden Gate Bakery","8.4","Chinese Bakery","Chinatown","SF","$","Famous for their egg tarts. Long lines normally. Egg tarts are divine."],
+  ["Good Luck Dim Sum","7.1","Dim Sum","Richmond","SF","$","So cheap, great selection, tasty."],
+  ["Good Mong Kok Bakery","7.2","Chinese/Dim Sum","Chinatown","SF","$","Good dim sum, probably not worth the line."],
+  ["Great Eastern","7.6","Chinese","Chinatown","SF","$$","Pretty standard and well executed Cantonese and dim sum. Nothing mind blowing tho."],
+  ["Greens Restaurant","8.2","California","Marina","SF","$$$","Vegetarian restaurant focusing on fresh seasonal veggies. The fig, melon, and burrata salad blew me away with its perfect balance of flavors. Also the location with waterfront views is awesome."],
+  ["Gumbo Social","8.3","Cajun/Creole","Bayview","SF","$$","This will make you forget that bland even exists."],
+  ["Ham and Cheese Deli","7.8","Sandwich","Richmond","SF","$","Fun sandwiches, fresh ingredients and high quality meats."],
+  ["Hang Ah Tearoom","7.2","Chinese","Chinatown","SF","$$","Pretty average dim sum, a little too expensive and portions a little too small."],
+  ["Happy Donuts","7.5","Dessert","Noe Valley","SF","$","Fresh donuts available 24/7. Great spot."],
+  ["Hawaiian Drive-In","7.8","Hawaiian","Excelsior","SF","$$","Really good price for the amount of food. Katsu is crispy and tender. Short ribs are well charred and marinated."],
+  ["Henry's Hunan","7.2","Chinese","Noe Valley","SF","$$","Hunan style food with a big menu. Nice local spot to keep coming back to."],
+  ["Hi Hat Pizza","8.1","Pizza","Mission","SF","$$","The dough is excellent, light and crisp all the way through. Cheese is high quality. Will be my go-to pizza spot from now on but I'll skip the apps."],
+  ["Hinodeya","7.9","Japanese","Japantown","SF","$$","The clam ramen was unique and wonderful. Super light and a little buttery. Good karaage too."],
+  ["Hon's Wun-Tun House","7.9","Chinese","Chinatown","SF","$","Well known for their wonton noodle soup and scallion pancakes. The wontons are some of the best I've had. The scallion pancakes are the best I've ever had."],
+  ["Hong Kong Claypot Restaurant","8.5","Chinese","Chinatown","SF","$","Their claypots are the star of the show without a doubt. They pack so much umami and are perfect with some rice."],
+  ["Hook Fish","7.7","Seafood","Outer Sunset","SF","$$","Really fresh tasty fishy tacos, poke, and the like. Great vibe, good spot for some casual day drinking."],
+  ["Horn BBQ","4.3","Barbecue","Oakland","Oakland","$$","The driest meat I've ever eaten. The burnt ends were like rocks. The ribs didn't even come clean from the bone. Very little smoke flavor."],
+  ["Hot Sauce and Panko","7.6","American","Nob Hill","SF","$$","Really creative wing flavors. The GBP hot and lemon pepper hot were standouts."],
+  ["House of Nanking","8.6","Chinese Fusion","Chinatown","SF","$$","Super unique Chinese food, has a twist to it. It's kind of like an elevated, more unique American Chinese spot."],
+  ["House of Pancakes","7.3","Chinese","Sunset","SF","$","Northern style Chinese food. Hand pulled noodles and pancake roll were standouts. Chili oil is among the best I've had."],
+  ["House of Xi'an Dumpling","7.8","Chinese","Chinatown","SF","$","The spicy beef soup was awesome. The beef is tasty and the noodles are pleasantly chewy. Really solid Xi'an style dumplings as well."],
+  ["Hy Ki Mi Gia","8.5","Vietnamese/Chinese","Tenderloin","SF","$","Great value. The braised duck leg was tender and flavorful. The noodles were perfectly chewy. Also the soy milk is bomb — they make it in house."],
+  ["i'a poke","7.4","Poke","Fillmore District","SF","$","Super fresh and great marinades for their fish."],
+  ["Ideale","8.1","Italian","North Beach","SF","$$","Quality Roman style food. Pizza could have used a little more browning but flavor was excellent. Pasta was awesome."],
+  ["Il Casaro","6.9","Italian","North Beach","SF","$$","Good but not anything special. Pizza is solid but none of the elements shine."],
+  ["Il Cilentano","7.9","Italian","North Beach","SF","$$","Pizza had great flavor but the sauce was a little watery and the dough got a little soggy in the middle. The gnocchi was amazing, soft and pillowy with tons of mushroom flavor."],
+  ["Il Pollaio","7.2","American","North Beach","SF","$","The chicken is nicely charred and tender. The spicy salsa they make is awesome. Great value for the price."],
+  ["In-N-Out","7.3","Burger","Fisherman's Wharf","SF","$","Solid burger but nothing special. Animal style saves it. Fries are not good even when you order them well done. Great value for the price though."],
+  ["INDO","8.3","Indonesian","Palo Alto","Palo Alto","$$","All around delicious with punchy flavors. The ribs and garlic noodles were especially awesome with the prawns being great as well."],
+  ["Jupiter","6.3","Pizza","Berkeley","Berkeley","$$","Pizza is a little doughy and underseasoned with not enough char. Tomato sauce tastes very much like marinara. The toppings are fresh and tasty though."],
+  ["Khao Tiew","8.1","Thai","West Portal","SF","$$","Flavors are real punchy and decently balanced. They don't hold back and there's a bit of creativity."],
+  ["Kin Khao","8.4","Thai","Union Square","SF","$$$","Really high quality and tasty with some creativity. Small plates but too expensive for what it is. Has a Michelin star apparently."],
+  ["King of Noodles","8.0","Chinese","Sunset","SF","$$","Chow mein was stellar, Sichuan chicken didn't hold back. And the dumplings were also solid."],
+  ["Kingdom of Dumpling","6.9","Chinese","Sunset","SF","$$","The boiled dumplings are excellent. Soup dumplings were bland and the skin was too thick. I think I need to try this again and order differently."],
+  ["Kogi Gogi","7.6","Korean","Sunset","SF","$$","It's all you can eat so it's def worth it. Delivers the right quality and taste."],
+  ["L&G Vietnamese Sandwich","7.4","Vietnamese","Tenderloin","SF","$","Def better than Saigon Sandwich."],
+  ["La Cheve Bakery and Brews","8.2","Mexican","Napa","Napa","$$","Really great selection of fun Mexican brunch items. Everything is freshly made with bold flavors. Their tortillas, chorizo, and baked goods really shine."],
+  ["La Corneta Taqueria","8.1","Mexican","Glen Park","SF","$","Neighborhood institution. Very solid super burrito, carne asada was super smoky with great flavor."],
+  ["La Palma Mexicatessen","8.3","Mexican","Mission","SF","$","The spot for fresh masa products. All the corn is super fresh. The salsas are awesome. The hot food is underrated."],
+  ["La Taqueria","6.4","Mexican","Mission","SF","$","No meat burritos el dorado style is what they're known for. Not actually that much meat in them and they're overpriced. Also not that flavorful."],
+  ["La Torta Gorda","8.4","Mexican","Mission","SF","$","The perfect torta, and great price to quantity ratio. Also they have huitlacoche which is awesome."],
+  ["Leo's Tacos","7.9","Mexican","Sunset","SF","$","Al pastor is really good. Lowkey their salsas are the highlight tho."],
+  ["LH Restaurant","7.4","Chinese","Richmond","SF","$","Classic Cantonese deli. Great deal on the meat plate combos."],
+  ["Lime Tree","8.1","Malaysian/Indonesian","Sunset","SF","$$","What a great hole in the wall. Love the curry noodles and martabak."],
+  ["Little Lucca","7.3","Sandwich","South SF","South SF","$","MASSIVE sandos. The sauces they use are great and the meat is good quality."],
+  ["Lokma","8.4","Middle Eastern","Richmond","SF","$$","Excellent brunch with a nice variety. Eggs are soft and fluffy with flavorful sujuk. The hazelnut spread is a revelation and the muhamara is addicting."],
+  ["Long Bridge Pizza","7.4","Pizza","Dogpatch","SF","$$","Sourdough pizza crust. The char was great and the crust is super flavorful. Wasn't enough sauce and the dough was a little too chewy."],
+  ["Lovely's","7.7","Burger","Cole Valley","SF","$$","Fries were top tier. Burger was very good just wanted a bit more seasoning."],
+  ["Lush Gelato","8.3","Ice Cream","North Beach","SF","$","Homemade flavors, great texture. The mint chip stands out for using real mint."],
+  ["Maillards","8.5","Burgers","Sunset/Richmond","SF","$$","Pop up smash burger spot. These are close to the perfect smash burger. The meat is tender and paired with a pillowy potato roll. Smoked jalapeño aioli is killer."],
+  ["Mama's on Washington Square","7.2","Breakfast","North Beach","SF","$$","Classic American breakfast paired with fresh California ingredients. Good but not worth the crazy hype if you're coming from outside the neighborhood."],
+  ["Mandalay","8.1","Burmese","Richmond","SF","$$","The tea leaf salad is a revelation of textures and flavor. Went back a second time and loved it. A bit too oily but so yummy."],
+  ["Manna","8.1","Korean","Sunset","SF","$$","Amazing value for the price. Kimchi and banchan is some of the best I've had. Japchae stole the show."],
+  ["Mantra India Restaurant","6.9","Indian","Mountain View","Mountain View","$$","Solid but unremarkable restaurant style Indian food."],
+  ["Mario's Bohemian Cigar Store and Cafe","7.0","Italian","North Beach","SF","$","Meatball sandwich has great flavor and the focaccia is a treat since it's from Liguria. The pizza was average."],
+  ["Marufuku","8.6","Japanese/Ramen","Japantown","SF","$$","Perfected version of your prototypical tonkotsu ramen. Creamy broth, with ultra tender pork. Broth is a bit salty."],
+  ["Marugame Udon","7.4","Japanese","Stonestown","SF","$$","The udon is nice and bouncy. Broth solid but a little salty and could have deeper flavor. Katsu a bit under seasoned."],
+  ["Maykadeh","7.5","Persian","North Beach","SF","$$","Good neighborhood spot for koobideh kebabs. The meat is very high quality and likely ground in house. The rice is also perfectly fluffy and flavorful."],
+  ["Mel's Drive-in","6.6","American","SOMA","SF","$$","Rock solid diner food. Nothing too special but def gets the job done."],
+  ["Memphis Minnie's","6.2","BBQ","SOMA","SF","$$","Unremarkable BBQ, ribs bland and dry, brisket has decent flavor but not as tender as it should be. Sausage was really good."],
+  ["Mensho","8.7","Japanese","Union Square","SF","$$","Amazingly rich broth. The pork and duck chashu are both killer."],
+  ["Mini Potstickers","7.9","Chinese","Inner Sunset","SF","$","Tried only the mini pan fried potstickers but they were great. Crispy and chewy with a juicy umami pork interior."],
+  ["Mo's Burgers","8.1","Burgers","North Beach","SF","$","A great burger — they cook it right. Meat can be a little underseasoned but always tastes good."],
+  ["Molinari's","8.3","Italian","North Beach","SF","$$","Great deli for sandwiches. Also lots of Italian products to purchase."],
+  ["Mr. Szechuan","7.9","Chinese","Sunset","SF","$","Bomb Sichuan food and the plate combo is an amazing deal. Food was a bit oily tho and a touch underseasoned."],
+  ["Mykonos","7.7","Greek","Burlingame","Burlingame","$$","Well rounded and executed. Lamb shank was the standout — tender, juicy, and seasoned."],
+  ["Mylapore","8.1","Indian","San Jose","San Jose","$$","Pretty spot on authentic dosa, chutney, sambar, and medhu vada. Dosa was super thin and crispy. Also had awesome gulab jamun."],
+  ["New Golden Daisy","7.4","Chinese","Chinatown","SF","$","Their wings are crazy good with great crisp and flavor. All food sold by the pound and very cheap."],
+  ["New Lun Ting Cafe","7.2","Chinese","Chinatown","SF","$","Cheap home style Chinese cooking with British influence. The roast pork is tender and the gravy is bomb. Potstickers are excellent."],
+  ["New Red Jade","7.2","Chinese","Castro","SF","$$","Classic but well executed Chinese American food. Flavors are excellent. Nothing special, but you'll be happy eating it."],
+  ["New Woey Loy Goey","8.3","Chinese","Chinatown","SF","$$","Absolute banger of a restaurant. Old school Cantonese food. Awesome value and everything is packed with flavor."],
+  ["Niku","8.6","Steakhouse","Design District","SF","$$$$","The sides (crispy potatoes especially) and the bone marrow app were insanely good. The flat iron steak was pretty gas though."],
+  ["Nojo Ramen House","7.4","Japanese","Hayes Valley","SF","$$","Simple ramen. The flavors are super clean but not crazy complex. Nice bouncy noodles. Above average local spot for ramen."],
+  ["Nopa","8.4","American","Alamo Square","SF","$$$","Seasonal and fresh, everything is well executed. The flavors are definitely fun though."],
+  ["Noren Izakaya","7.9","Japanese/Yakitori","North Beach","SF","$$$","Very good but pricey. The yakitori here is done authentically and is legit."],
+  ["North Beach Gyro","7.1","Middle Eastern","North Beach","SF","$","Great value, food is solid but unremarkable. Lacks seasoning and bold flavors."],
+  ["Oceanview Diner To-go","7.6","Sandwiches","North Berkeley","Berkeley","$","Solid spot for some quick sandos. Pastries are excellent."],
+  ["Old Jerusalem","6.1","Middle Eastern","SOMA","SF","$$","Poorly seasoned, overcooked meat. Pita and hummus were solid."],
+  ["Oren's Hummus","6.7","Middle Eastern","SOMA","SF","$$","Nothing too crazy here. Solid spot if you're in the area."],
+  ["Original Joe's","7.8","Italian","North Beach","SF","$$","Just some regular Italian American food. Everything is good here."],
+  ["Outta Sight Pizza","8.6","Pizza","Tenderloin","SF","$$","Great NY style pizza, thin and crisp with a nice char. Crust is crisp without being too chewy. Best slice in the city no doubt."],
+  ["Outta Sight Pizza II","8.4","Pizza","Chinatown","SF","$$","Really fun and wacky flavor combos. Maintains the same level of quality as the first location."],
+  ["Ozumo","8.2","Japanese","Embarcadero","SF","$$$","Solid dishes — wagyu, hamachi collar, and mushrooms were excellent. Sushi was a little underwhelming."],
+  ["Palermo","8.4","Italian Deli","North Beach","SF","$","Extremely well executed sandwiches. Each element shines by itself but becomes more than the sum of its parts when combined."],
+  ["Panchita's Pupuseria #2","7.2","El Salvadoran","Mission","SF","$","The pupusas are fresh. The mushroom and garlic was excellent. The guac and beans were great. Amazing value."],
+  ["Parada 22","7.9","Puerto Rican","Haight","SF","$$","Tostones/yucca go hard and Cuban was awesome too. Mojo pork is a little dry but has awesome flavor."],
+  ["Pho Bahn Mi","6.3","Vietnamese","Palo Alto","Palo Alto","$$","Meat is underseasoned and lacking char. Bread is decent. Fair option if in area."],
+  ["Pineapple King Bakery","8.8","Chinese","Sunset","SF","$","Yo wtf, the pineapple buns with butter are actually epic."],
+  ["Pizzahacker","7.8","Italian","Bernal Heights","SF","$$","Pretty nice topping combos on these pizzas and the crust/cheese/sauce trifecta is well balanced. Buffalo wings and ranch were awesome too."],
+  ["Pizzelle di North Beach","6.2","Pizza","North Beach","SF","$","Great while drunk. Solid for what it is."],
+  ["Poboy Kitchen","7.5","Creole","Potrero Hill","SF","$","Fresh and good quality ingredients. Bread could be a little better. Def worth a stop if in the area."],
+  ["Pokebola","4.1","Poke","Civic Center","SF","$","Bad poke. Fish not fresh and of poor quality. Flavors bad."],
+  ["Portofino","7.2","Seafood","North Beach","SF","$$","Very good seafood dishes. Amazing French fries when made crispy, but this restaurant is inconsistent."],
+  ["Prubechu","8.9","Guamanian","Mission","SF","$$","Unique island flavors that will make you go woah. Very acid forward. Chicken wings are an absolute highlight."],
+  ["Puranpoli","8.3","Indian","Santa Clara","Santa Clara","$","Great Maharashtrian Indian food — all veg."],
+  ["R & G Lounge","8.4","Chinese","Chinatown","SF","$$$","Elevated Cantonese food. Really great signature dishes. Get the fried crab and the special beef for sure."],
+  ["Red Hot Chili Pepper","8.3","Indian Chinese","San Carlos","San Carlos","$$","Amazing Indian Chinese — spicy and flavorful. Don't be afraid of the veg dishes, they are gas."],
+  ["Reem's (Ferry Building)","7.1","Middle Eastern","Ferry Building","SF","$","Interesting take on street Middle Eastern food with fresh ingredients but too pricey for what it is."],
+  ["Regent Thai","7.4","Thai","Noe Valley","SF","$$","Solid quality Thai food for local spot. Palate skewed a bit too American. Flavors could be punchier, spicier, and less sweet."],
+  ["Rice Roll Express","8.5","Chinese","Chinatown","SF","$","So simple yet so yummy. The rice rolls are silky smooth and loaded with filling. The house made chili oil and soy sauce elevate the experience."],
+  ["Rinconcito Salvadoreno","6.8","El Salvadorean","Bernal Heights","SF","$","Nice neighborhood spot — pupusas are the star here."],
+  ["Saigon Sandwich","7.2","Vietnamese","Tenderloin","SF","$","Dirt cheap amazing value. Bread is a little dry. Meat is tender but a little lacking in flavor."],
+  ["Sam Wo","8.2","Chinese","Chinatown","SF","$","Super tasty no frills food. Great chow fun. Will be back and highly recommend."],
+  ["Sam's Pizza and Burgers","8.1","Burgers","North Beach","SF","$","An absolute institution. The best version of a classic backyard burger. Juicy with a nice beefy charred flavor. No frills."],
+  ["San Tung","9.4","Chinese/Korean","Sunset","SF","$$","Get the wings and string beans. Your mind will be blown. Amazing noodles as well. Don't sleep on the dry fried beef either."],
+  ["Sandy's","8.2","Sandwich","Haight Ashbury","SF","$$","New Orleans muffuletta sandwiches. The olive salad in the sando really brings the flavor. The real star is the brown butter cookie."],
+  ["Saru Sushi Bar","9.0","Sushi","Noe Valley","SF","$$$","Did the Omakase and the fish was out of this world delicious. Super fresh and flown in from Japan. Tried some very unique stuff. Also they use real wasabi."],
+  ["Sasa","8.2","Sushi","Japantown","SF","$$$","Fish was excellent quality and fresh. Chirashi box was a fun, colorful, and good value dish."],
+  ["Schroeders","6.2","German","FiDi","SF","$$",""],
+  ["Se7enbuds","6.5","Middle Eastern","Polk Gulch","SF","$$","Decent spot, but the beef koobideh was lacking flavor and seasoning in comparison to the chicken one."],
+  ["SF Chicken Box","6.0","Fried Chicken","North Beach","SF","$","The chicken is pretty juicy but the meat itself is bland. Could really benefit from a brine. The breading is also lackluster, too salty and doesn't have that satisfying crunch."],
+  ["Shanghai Dumpling King","7.8","Chinese","SOMA","SF","$$","Love their fluffy dumplings. Great salt and pepper fish and chow mein too."],
+  ["Slice House by Tony Gemignani","6.1","Pizza","Haight","SF","$$","Dough was thick and chewy with little crisp. Cheese had zero color on it and the sauce had little flavor."],
+  ["Sodini's Restaurant","8.4","Italian","North Beach","SF","$$","Classic old school red sauce joint executed to perfection."],
+  ["Sotto Mare","8.6","Italian","North Beach","SF","$$","The cioppino is a dish that just hits a spot. The broth is rich and has a delicious seafood flavor. The crab is the star though."],
+  ["Square Pie Guys","7.0","Pizza","SOMA","SF","$$","Toppings were solid quality and the sauce was solid. Cheese was bland, dough was chewy and not crisp."],
+  ["State Bird Provisions","9.1","Californian","Fillmore District","SF","$$$","Extremely unique cooking with creative flavors. The dim sum style is fun. The egg tofu with chili oil and pickled mushrooms was my favorite."],
+  ["Stella","6.8","Italian","Burlingame","Burlingame","$$","Standard Italian restaurant by Bay Area standards that is solid but unremarkable."],
+  ["Straits","7.7","Singaporean","San Jose","SJ","$$","Flavorful with some unique twists. Def a little more upscale than average. Huge menu with a lot of variety."],
+  ["Super Duper Burgers","7.7","Burgers","SOMA","SF","$","Classic smash burgers done extremely well. Fries solid but could be crispier. Good sauces. For a chain this is excellent."],
+  ["Super Star Restaurant","7.9","Chinese/Filipino","Excelsior","SF","$","Fusion Chinese and Filipino. HK style fried pork chops — crispy, well seasoned, had a nice bite. Amazing value."],
+  ["Surisan","8.3","Korean","Fisherman's Wharf","SF","$$","Slightly elevated Korean food with excellent well balanced flavors. The ramyun tasted like ramen in the best way. The wings were huge and crispy."],
+  ["Szechuan Cuisine","6.4","Chinese","Sunset","SF","$$","Unimpressed with the spice and numbing levels. Everything just kinda tasted watered down for American tastes."],
+  ["Tacos Del Barrio","8.3","Mexican","Mission","SF","$","Well executed tacos. Everything is homemade and authentic. Tender meat bursting with flavor. Fresh tortillas. Spectacular salsa bar with lots of variety."],
+  ["Tacos El Charro","8.5","Mexican","Mission","SF","$","Proper authentic al pastor on a trompo. Closest to what I had in LA. Flavor of the al pastor and salsa is truly excellent. Open late."],
+  ["Tacos El Patron","7.9","Mexican","Mission","SF","$$","Free chips and salsa with all meals!! Great value. The quesabirria is excellent. They have four different salsas — the avocado one is awesome."],
+  ["Taishan Cuisine","7.3","Chinese/Dim Sum","Chinatown","SF","$","Open super late. Solid dim sum and Chinese food."],
+  ["Tajines Restaurant","7.7","Moroccan","North Beach","SF","$$","The food tasted and felt very homestyle. Everything was seasoned well and simple yet tasty."],
+  ["Taqueria Cancun","8.0","Mexican","Mission","SF","$","What you'd expect from a solid SF taqueria."],
+  ["Taqueria Guadalajara","8.1","Mexican","Mission","SF","$","Just a really solid burrito. The meat had a nice char to it and the seasoning was on point. They toasted my burrito as well."],
+  ["Taqueria Zorro","7.3","Mexican","North Beach","SF","$","Cheap solid quality Mexican taqueria. Zorro style with fries is gas."],
+  ["Tartine Bakery","8.7","French","Mission","SF","$$","Amazing panini, crispy chewy quality. Fantastic cake and pastries as well."],
+  ["Terra Cotta Warrior","7.2","Chinese","Sunset","SF","$","Northern style Chinese. Biang biang noodles were the star and totally worth coming back for."],
+  ["The Anchovy Bar","8.9","Seafood","Japantown","SF","$$$","Really fun creative seafood based dishes. Clams, anchovies, and scallops were standouts for me."],
+  ["The Bird","8.0","Fried Chicken","Hayes Valley","SF","$","Super solid chicken sando and fries. Worth the price."],
+  ["The Crow's Nest","7.3","Seafood","Santa Cruz","Santa Cruz","$$","Solid fresh seafood. The calamari was really good — more of a breaded calamari."],
+  ["The Fatted Calf","6.9","Sandwich","Ferry Building","SF","$$","French style deli, pricey. Simple sandwiches that allow the quality of the ingredients to shine."],
+  ["The Good Life Pizza","4.4","Pizza","Marina","SF","$$","Crust is chalky and not crispy. Low quality sauce and cheese also too much cheese."],
+  ["The Laundromat","8.3","Pizza","Richmond","SF","$$","Some of the better Detroit style pizza I've had. Dough was quite good — fluffy and not too heavy with a nice crisp. The pies with crazier toppings were awesome."],
+  ["The Little Chihuahua","5.9","Mexican","Noe Valley","SF","$$","Bland and poor ratios."],
+  ["The Pizza Place on Noriega","7.1","Pizza","Sunset","SF","$$","Best pizza in this part of the city for sure. They go heavy on toppings which leads to some greasiness. The crust has nice char and crisp."],
+  ["The Pizza Shop","7.4","Pizza","Mission","SF","$$","Straight up OG NY style pizza. Executes the style well. Really nostalgic."],
+  ["Three Babes Bakeshop","7.7","Bakery","Mission","SF","$","Love their pie, especially the chocolate pecan."],
+  ["Three Star Restaurant","6.8","Dim Sum","Sunset","SF","$","Probably should've gone earlier in the day when things were fresher."],
+  ["Tony's Coal Fired Pizza","8.1","Pizza","North Beach","SF","$","Their NY style slices are massive and a good representation of the style."],
+  ["Tony's Pizza Napoletana","8.7","Pizza","North Beach","SF","$$","Spectacular pizza of all styles. The coal fired pies are the real treat though. The New Yorker is truly spectacular."],
+  ["Tortas Los Picudos","8.1","Mexican","Mission","SF","$","Large tortas. The bread is awesome, super soft but good structure. Their green salsa really cuts through the fat."],
+  ["Toy Boat by Jane","8.3","Ice Cream","Richmond","SF","$","Really fun flavors that you don't really see elsewhere — coconut, lychee, good vegan options."],
+  ["Toyose","7.9","Korean","Sunset","SF","$$","Homestyle Korean food. The seafood and kimchi pancake was gas. Great vibes, open late."],
+  ["Trattoria Contadina","8.3","Italian","North Beach","SF","$$","Interesting pastas. More of an American Italian spot with some unique twists."],
+  ["TRULY Mediterranean","6.4","Middle Eastern","Mission","SF","$","Average lavash wraps and shawarma. The meat was well seasoned, the lavash was fresh."],
+  ["Turquaz","8.0","Middle Eastern","SOMA","SF","$$","Really well seasoned, flavorful, and perfectly cooked meats. Smoked eggplant yogurt is also awesome."],
+  ["Uncle Titos","7.8","Filipino","Mission","SF","$$","Awesome pork options and fried rice, crispy lechon is so good."],
+  ["Viva Goa","7.8","Indian","Marina","SF","$$","Specializes in Goan food. All the fish was cooked perfectly and the curries were well spiced. Naan was excellent — I think they make it themselves."],
+  ["Volcano Curry","8.3","Japanese","Central Richmond","SF","$","Bomb Japanese curry. Crispy flaky moist katsu and a rich silky curry. Great value and great flavor."],
+  ["Watani Spot","8.3","Afghani","Burlingame","Burlingame","$$","Meats are perfectly cooked and seasoned. Kebab is amongst the best I've had. Rice is bursting with flavor."],
+  ["Yarsa","7.7","Nepalese/Indian","North Beach","SF","$$","Very tasty Indian and Nepali food — has the classics."],
+  ["Yuanbao Jiaozi","9.2","Chinese","Inner Sunset","SF","$","The spicy beef noodle soup transported me to another plane of being. Highly fragrant with tender pieces of beef and tendon. The pig ear salad is a slept on banger item."],
+  ["Yuet Lee","8.0","Chinese","Chinatown","SF","$$","Super solid cheap Cantonese food. Want to go back and try their seafood."],
+  ["Z and Y","8.8","Chinese","Chinatown","SF","$$","The ultimate Sichuan restaurant."],
+  ["Zante Pizza and Indian Cuisine","7.9","Indian","Mission","SF","$$","INDIAN PIZZA. Lowkey this kinda slaps. The dough is like a naan dough and the toppings are well thought out with big flavors."],
+  ["Zentarou Sushi and Sake Bar","8.3","Japanese","Sunset","SF","$$$","Extensive and extremely fresh fish menu. The omakase is a pretty good deal. Some pieces could've been better seasoned."],
+  ["Zushi Puzzle","9.0","Sushi","Marina","SF","$$$$","A true culinary experience. The fatty tuna cheek was a revelation, not to mention the uni with soft tofu. Chef Roger is a huge part of the experience."],
+  ["ZZAN","7.1","Korean","Union Square","SF","$$","Good quality Korean food but nothing special. The tteokbokki was great tho."],
+];
+
+const STORE_KEY = 'shivsEats_v5';
+const DEL_KEY = 'shivsEats_deleted_v5';
+
+function loadDeleted() {
+  try { const r = localStorage.getItem(DEL_KEY); if (r) return new Set(JSON.parse(r)); } catch(e) {}
+  return new Set();
+}
+function saveDeleted(set) {
+  try { localStorage.setItem(DEL_KEY, JSON.stringify([...set])); } catch(e) {}
+}
+
+function loadData() {
+  try { const r = localStorage.getItem(STORE_KEY); if (r) return JSON.parse(r); } catch(e) {}
+  return null;
+}
+function saveData(arr) {
+  try { localStorage.setItem(STORE_KEY, JSON.stringify(arr)); } catch(e) {}
+}
+
+let deletedIds = loadDeleted();
+
+function buildFromSeed() {
+  const jitter = () => (Math.random() - 0.5) * 0.0045;
+  return SEED.map((r, i) => {
+    const rating = parseFloat(r[1]) || 0;
+    const c = getCoords(r[3], r[4]);
+    return { id:'seed_'+i, name:r[0], rating, cuisine:r[2], neighborhood:r[3],
+      city:r[4], cost:r[5], review:r[6],
+      coords: c ? [c[0]+jitter(), c[1]+jitter()] : null, custom:false };
+  }).filter(r => !deletedIds.has(r.id));
+}
+
+let restaurants = loadData();
+if (!restaurants) {
+  restaurants = buildFromSeed();
+  saveData(restaurants);
+} else {
+  // Filter out any previously deleted seed entries that may have crept back in
+  restaurants = restaurants.filter(r => !deletedIds.has(r.id));
+}
+
+// Map
+const map = L.map('map', {zoomControl:true}).setView([37.7749,-122.4194], 13);
+L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
+  { attribution:'© OpenStreetMap © CARTO', subdomains:'abcd', maxZoom:19 }).addTo(map);
+
+let activeCuisine = 'all', searchQuery = '', sortBy = 'rating', activeId = null;
+const markerMap = {};
+
+function rebuildCuisineFilters() {
+  const cuisines = [...new Set(restaurants.map(r=>r.cuisine).filter(Boolean))].sort();
+  const cont = document.getElementById('cuisineFilters');
+  cont.innerHTML = '<button class="filter-chip active" data-cuisine="all">All</button>';
+  cuisines.forEach(c => {
+    const btn = document.createElement('button');
+    btn.className = 'filter-chip' + (activeCuisine===c?' active':'');
+    btn.dataset.cuisine = c; btn.textContent = c;
+    cont.appendChild(btn);
+  });
+  if (window._updateFilterArrows) window._updateFilterArrows();
+}
+
+function filterSort() {
+  return restaurants.filter(r => {
+    const mc = activeCuisine==='all' || r.cuisine===activeCuisine;
+    const q = searchQuery.toLowerCase();
+    const ms = !q || r.name.toLowerCase().includes(q) ||
+      (r.cuisine||'').toLowerCase().includes(q) ||
+      (r.neighborhood||'').toLowerCase().includes(q) ||
+      (r.review||'').toLowerCase().includes(q);
+    return mc && ms;
+  }).sort((a,b) => {
+    if(sortBy==='rating') return b.rating-a.rating;
+    if(sortBy==='name') return a.name.localeCompare(b.name);
+    if(sortBy==='cost') return (a.cost||'').length-(b.cost||'').length;
+    return 0;
+  });
+}
+
+function buildPopupHTML(r) {
+  const review = r.review ? `<div class="popup-review">${r.review}</div>` : '';
+  const esc = r.id.replace(/'/g,"\\'");
+  return `<div class="popup-inner">
+    <div class="popup-header">
+      <div class="popup-name">${r.name}</div>
+      <div class="popup-rating">${r.rating ? r.rating+'/10' : '—'}</div>
+    </div>
+    <div class="popup-tags">
+      <span class="popup-tag cuisine">${r.cuisine||'—'}</span>
+      <span class="popup-tag">${r.neighborhood||''}${r.city&&r.city!==r.neighborhood?', '+r.city:''}</span>
+      <span class="popup-tag">${r.cost||''}</span>
+    </div>
+    ${review}
+    <button class="popup-edit-btn" onclick="openEdit('${esc}')">✏ Edit</button>
+  </div>`;
+}
+
+function renderList() {
+  const visible = filterSort();
+  const container = document.getElementById('listContainer');
+  container.innerHTML = '';
+  visible.forEach(r => {
+    const card = document.createElement('div');
+    card.className = 'restaurant-card' + (r.id===activeId?' active':'');
+    card.dataset.id = r.id;
+    card.innerHTML = `
+      <div class="card-top">
+        <div class="card-name">${r.name}</div>
+        <div class="card-rating">${r.rating ? r.rating+'/10' : '—'}</div>
+      </div>
+      <div class="card-meta">
+        <span>${r.cuisine||'—'}</span><span>·</span>
+        <span>${r.neighborhood||''}</span><span>·</span>
+        <span>${r.cost||''}</span>
+      </div>
+      ${r.review?`<div class="card-review">${r.review}</div>`:''}
+    `;
+    card.addEventListener('click', ()=>selectRestaurant(r.id));
+    container.appendChild(card);
+  });
+  document.getElementById('visibleCount').textContent = visible.length+' spots';
+  const visIds = new Set(visible.map(r=>r.id));
+  restaurants.forEach(r => {
+    const m = markerMap[r.id];
+    if(!m) return;
+    if(visIds.has(r.id)) m.addTo(map); else m.remove();
+  });
+}
+
+function selectRestaurant(id) {
+  document.querySelector(`.restaurant-card[data-id="${activeId}"]`)?.classList.remove('active');
+  activeId = id;
+  document.querySelector(`.restaurant-card[data-id="${id}"]`)?.classList.add('active');
+  document.querySelector(`.restaurant-card[data-id="${id}"]`)?.scrollIntoView({behavior:'smooth',block:'nearest'});
+  const r = restaurants.find(x=>x.id===id);
+  if(!r?.coords) return;
+  map.flyTo(r.coords, 15, {duration:0.6});
+  markerMap[id]?.openPopup();
+}
+
+function createMarker(r) {
+  if(!r.coords) return;
+  const color = getRatingColor(r.rating);
+  const icon = L.divIcon({
+    html:`<div class="marker-pin" style="background:${color}"><span>${r.rating||'?'}</span></div>`,
+    iconSize:[30,30], iconAnchor:[15,30], popupAnchor:[0,-32], className:''
+  });
+  const m = L.marker(r.coords, {icon}).bindPopup(buildPopupHTML(r),{maxWidth:310,minWidth:270,closeButton:true});
+  m.on('click', ()=>selectRestaurant(r.id));
+  markerMap[r.id] = m;
+  m.addTo(map);
+}
+function removeMarker(id) { if(markerMap[id]){markerMap[id].remove();delete markerMap[id];} }
+function refreshMarker(r) { removeMarker(r.id); createMarker(r); }
+
+restaurants.forEach(createMarker);
+
+document.getElementById('search').addEventListener('input', e=>{searchQuery=e.target.value;renderList();});
+document.getElementById('sortSelect').addEventListener('change', e=>{sortBy=e.target.value;renderList();});
+document.getElementById('cuisineFilters').addEventListener('click', e=>{
+  const chip = e.target.closest('.filter-chip');
+  if(!chip) return;
+  document.querySelectorAll('.filter-chip').forEach(c=>c.classList.remove('active'));
+  chip.classList.add('active');
+  activeCuisine = chip.dataset.cuisine;
+  renderList();
+});
+
+// Modal
+let pickMap=null, pickMarker=null, editingId=null;
+
+function initPickMap() {
+  if(pickMap) return;
+  pickMap = L.map('pickMap',{zoomControl:true}).setView([37.7749,-122.4194],12);
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
+    {attribution:'© OpenStreetMap © CARTO',subdomains:'abcd',maxZoom:19}).addTo(pickMap);
+  pickMap.on('click', e=>{ setPickMarker(e.latlng.lat, e.latlng.lng); });
+}
+
+function setPickMarker(lat, lng) {
+  if(pickMarker) pickMap.removeLayer(pickMarker);
+  pickMarker = L.marker([lat,lng],{draggable:true}).addTo(pickMap);
+  pickMarker.on('dragend', e=>{ const p=e.target.getLatLng(); updateCoordDisplay(p.lat,p.lng); });
+  updateCoordDisplay(lat,lng);
+}
+function updateCoordDisplay(lat,lng) {
+  document.getElementById('coordDisplay').textContent=`📍 ${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+}
+function getPickedCoords() {
+  if(!pickMarker) return null;
+  const p=pickMarker.getLatLng();
+  return [p.lat,p.lng];
+}
+
+function openModal(title, prefill={}) {
+  document.getElementById('modalTitle').textContent=title;
+  document.getElementById('fName').value=prefill.name||'';
+  document.getElementById('fRating').value=prefill.rating||'';
+  document.getElementById('fCuisine').value=prefill.cuisine||'';
+  document.getElementById('fHood').value=prefill.neighborhood||'';
+  document.getElementById('fCity').value=prefill.city||'';
+  document.getElementById('fCost').value=prefill.cost||'$$';
+  document.getElementById('fReview').value=prefill.review||'';
+  document.getElementById('coordDisplay').textContent=prefill.coords
+    ?`📍 ${prefill.coords[0].toFixed(5)}, ${prefill.coords[1].toFixed(5)}`
+    :'No location set yet — click the map above';
+  document.getElementById('btnDelete').style.display=editingId?'block':'none';
+  document.getElementById('modalOverlay').classList.add('open');
+  setTimeout(()=>{
+    initPickMap(); pickMap.invalidateSize();
+    if(prefill.coords){
+      setPickMarker(prefill.coords[0],prefill.coords[1]);
+      pickMap.setView(prefill.coords,15);
+    } else {
+      if(pickMarker){pickMap.removeLayer(pickMarker);pickMarker=null;}
+      pickMap.setView([37.7749,-122.4194],12);
+    }
+  },80);
+}
+function closeModal() { document.getElementById('modalOverlay').classList.remove('open'); editingId=null; }
+
+document.getElementById('openAddBtn').addEventListener('click',()=>{editingId=null;openModal('Add Restaurant');});
+document.getElementById('modalClose').addEventListener('click',closeModal);
+document.getElementById('btnCancel').addEventListener('click',closeModal);
+document.getElementById('modalOverlay').addEventListener('click',e=>{if(e.target===document.getElementById('modalOverlay'))closeModal();});
+
+window.openEdit = function(id) {
+  editingId=id;
+  const r=restaurants.find(x=>x.id===id);
+  if(!r) return;
+  openModal('Edit Restaurant', r);
+};
+
+document.getElementById('btnSave').addEventListener('click',()=>{
+  const name=document.getElementById('fName').value.trim();
+  if(!name){alert('Please enter a restaurant name.');return;}
+  const rating=parseFloat(document.getElementById('fRating').value)||0;
+  const coords=getPickedCoords();
+  const data={name,rating,cuisine:document.getElementById('fCuisine').value.trim(),
+    neighborhood:document.getElementById('fHood').value.trim(),
+    city:document.getElementById('fCity').value.trim(),
+    cost:document.getElementById('fCost').value,
+    review:document.getElementById('fReview').value.trim(),coords,custom:true};
+  if(editingId){
+    const idx=restaurants.findIndex(r=>r.id===editingId);
+    if(idx!==-1){restaurants[idx]={...restaurants[idx],...data};refreshMarker(restaurants[idx]);}
+  } else {
+    const newR={id:'custom_'+Date.now(),...data};
+    restaurants.push(newR);createMarker(newR);
+  }
+  saveData(restaurants);rebuildCuisineFilters();renderList();closeModal();
+  if(!editingId&&coords) map.flyTo(coords,15,{duration:0.8});
+});
+
+document.getElementById('btnDelete').addEventListener('click',()=>{
+  if(!editingId||!confirm('Delete this restaurant?')) return;
+  removeMarker(editingId);
+  // Remember deletion so it doesn't come back from SEED on refresh
+  deletedIds.add(editingId);
+  saveDeleted(deletedIds);
+  restaurants=restaurants.filter(r=>r.id!==editingId);
+  saveData(restaurants);rebuildCuisineFilters();renderList();closeModal();
+});
+
+rebuildCuisineFilters();
+renderList();
+
+// ── Mobile bottom sheet ───────────────────────────────────────────────────────
+const isMobile = () => window.innerWidth <= 700;
+
+function openSheet() {
+  document.getElementById('bottomSheet').classList.add('open');
+  document.getElementById('sheetBackdrop').classList.add('open');
+  document.getElementById('mobListBtn').style.display = 'none';
+  renderSheetList();
+}
+function closeSheet() {
+  document.getElementById('bottomSheet').classList.remove('open');
+  document.getElementById('sheetBackdrop').classList.remove('open');
+  document.getElementById('mobListBtn').style.display = '';
+}
+
+document.getElementById('mobListBtn').addEventListener('click', openSheet);
+document.getElementById('sheetClose').addEventListener('click', closeSheet);
+document.getElementById('sheetBackdrop').addEventListener('click', closeSheet);
+
+// Sync sheet sort with main sort
+document.getElementById('sheetSort').addEventListener('change', e => {
+  sortBy = e.target.value;
+  document.getElementById('sortSelect').value = e.target.value;
+  renderSheetList();
+  renderList();
+});
+
+// Sheet cuisine filters (mirrors main filters)
+function rebuildSheetFilters() {
+  const cuisines = [...new Set(restaurants.map(r => r.cuisine).filter(Boolean))].sort();
+  const cont = document.getElementById('sheetFilters');
+  cont.innerHTML = '<button class="filter-chip active" data-cuisine="all">All</button>';
+  cuisines.forEach(c => {
+    const btn = document.createElement('button');
+    btn.className = 'filter-chip' + (activeCuisine === c ? ' active' : '');
+    btn.dataset.cuisine = c;
+    btn.textContent = c;
+    cont.appendChild(btn);
+  });
+}
+document.getElementById('sheetFilters').addEventListener('click', e => {
+  const chip = e.target.closest('.filter-chip');
+  if (!chip) return;
+  document.querySelectorAll('#sheetFilters .filter-chip, #cuisineFilters .filter-chip').forEach(c => c.classList.remove('active'));
+  // activate matching chips in both bars
+  document.querySelectorAll(`[data-cuisine="${chip.dataset.cuisine}"]`).forEach(c => c.classList.add('active'));
+  activeCuisine = chip.dataset.cuisine;
+  renderSheetList();
+  renderList();
+});
+
+function renderSheetList() {
+  if (!isMobile()) return;
+  const visible = filterSort();
+  const container = document.getElementById('sheetList');
+  container.innerHTML = '';
+  document.getElementById('sheetCount').textContent = visible.length + ' spots';
+  visible.forEach(r => {
+    const card = document.createElement('div');
+    card.className = 'restaurant-card' + (r.id === activeId ? ' active' : '');
+    card.dataset.id = r.id;
+    card.innerHTML = `
+      <div class="card-top">
+        <div class="card-name">${r.name}</div>
+        <div class="card-rating">${r.rating ? r.rating + '/10' : '—'}</div>
+      </div>
+      <div class="card-meta">
+        <span>${r.cuisine || '—'}</span><span>·</span>
+        <span>${r.neighborhood || ''}</span><span>·</span>
+        <span>${r.cost || ''}</span>
+      </div>
+      ${r.review ? `<div class="card-review">${r.review}</div>` : ''}
+    `;
+    card.addEventListener('click', () => {
+      closeSheet();
+      selectRestaurant(r.id);
+    });
+    container.appendChild(card);
+  });
+}
+
+// Re-render sheet when search changes on mobile
+document.getElementById('search').addEventListener('input', () => {
+  if (isMobile()) renderSheetList();
+});
+
+// On map pin tap on mobile, close the sheet
+map.on('popupopen', () => {
+  if (isMobile()) closeSheet();
+});
+
+// Patch rebuildCuisineFilters to also rebuild sheet filters
+const _origRebuild = rebuildCuisineFilters;
+// already called above — also call sheet rebuild after main renders
+const _origRenderList = renderList;
+
+rebuildSheetFilters();
+
+// Rating guide modal
+document.getElementById('openGuideBtn').addEventListener('click', () => {
+  document.getElementById('guideOverlay').classList.add('open');
+});
+document.getElementById('guideClose').addEventListener('click', () => {
+  document.getElementById('guideOverlay').classList.remove('open');
+});
+document.getElementById('guideOverlay').addEventListener('click', e => {
+  if (e.target === document.getElementById('guideOverlay'))
+    document.getElementById('guideOverlay').classList.remove('open');
+});
+
+// ── Filter scroll arrows ──────────────────────────────────────────────────────
+(function() {
+  const scroll = document.getElementById('cuisineFilters');
+  const btnLeft = document.getElementById('filterLeft');
+  const btnRight = document.getElementById('filterRight');
+  const STEP = 200;
+
+  function updateArrows() {
+    if (!btnLeft || !btnRight || !scroll) return;
+    btnLeft.disabled = scroll.scrollLeft <= 2;
+    btnRight.disabled = scroll.scrollLeft >= scroll.scrollWidth - scroll.clientWidth - 2;
+  }
+
+  if (btnLeft) btnLeft.addEventListener('click', () => {
+    scroll.scrollBy({ left: -STEP, behavior: 'smooth' });
+    setTimeout(updateArrows, 350);
+  });
+  if (btnRight) btnRight.addEventListener('click', () => {
+    scroll.scrollBy({ left: STEP, behavior: 'smooth' });
+    setTimeout(updateArrows, 350);
+  });
+  if (scroll) scroll.addEventListener('scroll', updateArrows);
+  window.addEventListener('resize', updateArrows);
+  window._updateFilterArrows = updateArrows;
+  setTimeout(updateArrows, 400);
+})();
+
+</script>
+</body>
+</html>
